@@ -4,11 +4,13 @@ from rdflib.graph import Graph
 
 XSD = rdflib.namespace.XSD
 RDF = rdflib.namespace.RDF
+DCTERMS = rdflib.namespace.DCTERMS
 ITSRDF = Namespace('http://www.w3.org/2005/11/its/rdf#')
 NIF = Namespace('http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#')
 
-class NIFPrefixes:
+nif_ontology_uri = 'http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core/2.1'
 
+class NIFPrefixes:
     
     def __init__(self):
         self.manager = NamespaceManager(Graph())

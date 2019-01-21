@@ -1,6 +1,7 @@
 
 import unittest
 from pynif.context import NIFContext
+from .util import turtle_equal
 
 class ContextTest(unittest.TestCase):
     
@@ -27,15 +28,18 @@ class ContextTest(unittest.TestCase):
         c.endIndex = len(self.example_text)
         c.mention = self.example_text
         
-        b = c.addBean(91, 102)
+        b = c.add_bean(91, 102)
         self.assertEqual(91, b.beginIndex)
         self.assertEqual(102, b.endIndex)
         self.assertEqual("Afghanistan", b.mention)
         self.assertEqual("http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0", b.context)
         
     def test_turtle(self):
-        self.maxDiff = None
-        turtle = """<http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_0_1411>
+        turtle = """@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+@prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+        
+<http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_0_1411>
 \ta                       nif:OffsetBasedString , nif:Context ;
 \tnif:beginIndex  "0"^^xsd:nonNegativeInteger ;
 \tnif:endIndex    "{}"^^xsd:nonNegativeInteger ;
@@ -43,7 +47,7 @@ class ContextTest(unittest.TestCase):
 
 <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#collection>
 \ta               nif:ContextCollection ;
-\tnif:hasContext\t<http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_0_1411>
+\tnif:hasContext\t<http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_0_1411> ;
 \t<http://purl.org/dc/terms/conformsTo>
 \t\t<http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core/2.1> .""".format(len(self.example_text), self.example_text.replace('"', '\\"'))
 
@@ -52,7 +56,6 @@ class ContextTest(unittest.TestCase):
         c.beginIndex = 0
         c.endIndex = len(self.example_text)
         c.mention = self.example_text
+
         
-        gen_turtle = c.turtle.strip()
-        
-        self.assertEqual(turtle.strip(), gen_turtle)
+        self.assertTrue(turtle_equal(turtle, c.turtle))
