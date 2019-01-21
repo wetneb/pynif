@@ -1,5 +1,7 @@
 ## pyNIF-lib
 
+[![Build Status](https://travis-ci.org/wetneb/pynif.svg?branch=master)](https://travis-ci.org/wetneb/pynif)
+
 ## What is NIF (NLP Interchange Format) ?
 
 The NLP Interchange Format (NIF) is an RDF/OWL-based format that aims to achieve interoperability between Natural Language Processing (NLP) tools, language resources and annotations. NIF consists of specifications, ontologies and software (overview).
