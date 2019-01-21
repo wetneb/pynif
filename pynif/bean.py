@@ -53,7 +53,35 @@ class NIFBean(object):
             yield (self.uri, NIF.referenceContext, URIRef(self.referenceContext))
         if self.taMsClassRef is not None:
             yield (self.uri, NIF.taMsClassRef, URIRef(self.taMsClassRef))
-
+            
+    @classmethod
+    def load_from_graph(cls, graph, uri):
+        """
+        Given a RDF graph and a URI which represents a bean in
+        that graph, load the corresponding bean.
+        """
+        bean = cls()
+        bean.original_uri = uri
+        for s,p,o in graph.triples((uri, None, None)):
+            if p == NIF.anchorOf:
+                bean.mention = o.toPython()
+            elif p == NIF.beginIndex:
+                bean.beginIndex = o.toPython()
+            elif p == NIF.endIndex:
+                bean.endIndex = o.toPython()
+            elif p == ITSRDF.taAnnotatorsRef:
+                bean.annotator = o.toPython()
+            elif p == ITSRDF.taConfidence:
+                bean.score = o.toPython()
+            elif p == ITSRDF.taIdentRef:
+                bean.taIdentRef = o.toPython()
+            elif p == NIF.taMsClassRef:
+                bean.taMsClassRef = o.toPython()
+            elif p == ITSRDF.taClassRef:
+                if bean.taClassRef is None:
+                    bean.taClassRef = []
+                bean.taClassRef.append(o.toPython())
+        return bean
 
     @property
     def turtle(self):

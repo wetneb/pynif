@@ -58,6 +58,34 @@ class NIFContext(object):
         yield (self.collection_uri, RDF.type, NIF.ContextCollection)
         yield (self.collection_uri, NIF.hasContext, self.uri)
         yield (self.collection_uri, DCTERMS.conformsTo, URIRef(nif_ontology_uri))
+        
+    @classmethod
+    def load_from_graph(cls, graph, uri):
+        """
+        Given a RDF graph and a URI which represents a context in
+        that graph, load the corresponding context and its child beans.
+        """
+        context = cls()
+        context.original_uri = uri
+        # Load core data
+        for s,p,o in graph.triples((uri, None, None)):
+            if p == NIF.isString:
+                context.mention = o.toPython()
+            elif p == NIF.beginIndex:
+                context.beginIndex = o.toPython()
+            elif p == NIF.endIndex:
+                context.endIndex = o.toPython()
+ 
+        # Load collection
+        for s,p,o in graph.triples((None, NIF.hasContext, uri)):
+            context.original_collection_uri = s.toPython()
+            
+        # Load child beans
+        for s,p,o in graph.triples((None, NIF.referenceContext, uri)):
+             bean = NIFBean.load_from_graph(graph, s)
+             context.beans.append(bean)
+             
+        return context
 
     @property
     def turtle(self):
