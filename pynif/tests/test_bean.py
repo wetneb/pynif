@@ -16,6 +16,11 @@ class BeanTest(unittest.TestCase):
         b.mention = "revolution"
         self.assertEqual("""<Bean 34-44: 'revolution'>""", str(b))
         
+    def test_original_uri(self):
+        b = NIFBean()
+        b.original_uri = 'http://example.com/my_annotation'
+        self.assertEqual('http://example.com/my_annotation', str(b.uri))
+        
     def test_to_turtle(self):
         b = NIFBean()
         b.context = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0'

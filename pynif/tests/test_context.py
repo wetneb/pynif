@@ -21,6 +21,11 @@ class ContextTest(unittest.TestCase):
         c.endIndex = len(c.mention)
         self.assertEqual("<NIFContext 0-78: '    Primary Navigation Secondary Navigation Search...'>", str(c))
         
+    def test_original_uri(self):
+        b = NIFContext()
+        b.original_uri = 'http://example.com/my_annotation'
+        self.assertEqual('http://example.com/my_annotation', str(b.uri))
+        
     def test_add_bean(self):
         c = NIFContext()
         c.baseURI = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0'

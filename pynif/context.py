@@ -4,6 +4,9 @@ from .prefixes import NIF, XSD, ITSRDF, RDF, DCTERMS, nif_ontology_uri
 from .prefixes import NIFPrefixes
 
 class NIFContext(object):
+    """
+    A context is a string which can be annotated by beans.
+    """
 
     def __init__(self):
         self.baseURI = None
@@ -11,6 +14,8 @@ class NIFContext(object):
         self.endIndex = None
         self.mention = None
         self.beans = []
+        self.original_uri = None
+        self.original_collection_uri = None
 
     def add_bean(self, beginIndex=None, endIndex=None):
         """
@@ -20,7 +25,7 @@ class NIFContext(object):
         """
         bean = NIFBean()
         bean.context = self.baseURI
-        bean.referenceContext = self.referenceContext
+        bean.referenceContext = self.uri
         bean.beginIndex = beginIndex
         bean.endIndex = endIndex
         if beginIndex is not None and endIndex is not None:
@@ -29,12 +34,16 @@ class NIFContext(object):
         return bean
     
     @property
+    def generated_uri(self):
+        return  self.baseURI + '/#offset_' + str(self.beginIndex) + '_' + str(self.endIndex)
+    
+    @property
     def uri(self):
-        return URIRef(self.referenceContext)
+        return URIRef(self.original_uri or self.generated_uri)
     
     @property
     def collection_uri(self):
-        return URIRef(self.baseURI + '/#collection')
+        return URIRef(self.original_collection_uri or self.baseURI + '/#collection')
     
     def triples(self):
         """
@@ -49,10 +58,6 @@ class NIFContext(object):
         yield (self.collection_uri, RDF.type, NIF.ContextCollection)
         yield (self.collection_uri, NIF.hasContext, self.uri)
         yield (self.collection_uri, DCTERMS.conformsTo, URIRef(nif_ontology_uri))
-
-    @property
-    def referenceContext(self):
-        return  self.baseURI + '/#offset_' + str(self.beginIndex) + '_' + str(self.endIndex)
 
     @property
     def turtle(self):

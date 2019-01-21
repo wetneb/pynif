@@ -19,10 +19,15 @@ class NIFBean(object):
         self.taClassRef = None
         self.referenceContext = None
         self.taMsClassRef = None
+        self.original_uri = None
         
     @property
     def uri(self):
-        return URIRef(self.context + '/#offset_' + str(self.beginIndex) + '_' + str(self.endIndex))
+        return URIRef(self.original_uri or self.generated_uri)
+        
+    @property
+    def generated_uri(self):
+        return self.context + '/#offset_' + str(self.beginIndex) + '_' + str(self.endIndex)
 
     def triples(self):
         """
