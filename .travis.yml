@@ -1,16 +1,13 @@
-# this file is *not* meant to cover or endorse the use of travis, but rather to
-# help confirm pull requests to this project.
-
 language: python
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+install:
+  - pip install -r requirements.txt
+# command to run tests
+script:
+  - pytest
 
-env:
-  - TOXENV=py27
-  - TOXENV=py33
-  - TOXENV=py34
-
-install: pip install tox
-
-script: tox
-
-notifications:
-  email: false
