@@ -1,173 +1,78 @@
+
 class NIFBean(object):
+    """
+    Represents an annotation in a document.
+    """
+    
     def __init__(self):
-        self._context = None
-        self._annotator = None
-        self._mention = None
-        self._beginIndex = None
-        self._endIndex = None
-        self._score = None
-        self._taIdentRef = None
-        self._taClassRef = None
-        self._referenceContext = None
-        self._taMsClassRef = None
+        self.context = None
+        self.annotator = None
+        self.mention = None
+        self.beginIndex = None
+        self.endIndex = None
+        self.score = None
+        self.taIdentRef = None
+        self.taClassRef = None
+        self.referenceContext = None
+        self.taMsClassRef = None
 
     @property
-    def taMsClassRef(self):
-        if self._taMsClassRef is not None:
-            return 'nif:taMsClassRef        <' + self._taMsClassRef + '> ;' + '\n\t'
+    def taMsClassRefStatement(self):
+        if self.taMsClassRef is not None:
+            return 'nif:taMsClassRef        <' + self.taMsClassRef + '> ;' + '\n\t'
         return ''
 
-    @taMsClassRef.setter
-    def taMsClassRef(self, value):
-        self._taMsClassRef = value
-
-    @taMsClassRef.deleter
-    def taMsClassRef(self):
-        del self._taMsClassRef
-
     @property
-    def context(self):
-        return self._context
-
-    @context.setter
-    def context(self, value):
-        self._context = value
-
-    @context.deleter
-    def context(self):
-        del self._context
-
-    @property
-    def annotator(self):
-        if self._annotator is not None:
-            return 'itsrdf:taAnnotatorsRef  <' + self._annotator + '> ;' + '\n\t'
+    def annotatorStatement(self):
+        if self.annotator is not None:
+            return 'itsrdf:taAnnotatorsRef  <' + self.annotator + '> ;' + '\n\t'
         return ''
 
-    @annotator.setter
-    def annotator(self, value):
-        self._annotator = value
-
-    @annotator.deleter
-    def annotator(self):
-        del self._annotator
-
     @property
-    def mention(self):
-        if self._mention is not None:
-           return  'nif:anchorOf            "' + self._mention + '" ;\n\t'
+    def mentionStatement(self):
+        if self.mention is not None:
+           return  'nif:anchorOf            "' + self.mention + '" ;\n\t'
         return ''
 
-    @mention.setter
-    def mention(self, value):
-        self._mention = value
-
-    @mention.deleter
-    def mention(self):
-        del self._mention
-
     @property
-    def beginIndex(self):
-        if self._beginIndex is not None:
-            return 'nif:beginIndex          "' + str(self._beginIndex) + '"^^xsd:nonNegativeInteger ;\n\t'
+    def beginIndexStatement(self):
+        if self.beginIndex is not None:
+            return 'nif:beginIndex          "' + str(self.beginIndex) + '"^^xsd:nonNegativeInteger ;\n\t'
         return ''
 
-    @beginIndex.setter
-    def beginIndex(self, value):
-        self._beginIndex = value
-
-    @beginIndex.deleter
-    def beginIndex(self):
-        del self._beginIndex
-
     @property
-    def endIndex(self):
-        if self._endIndex is not None:
-            return 'nif:endIndex            "' + str(self._endIndex) + '"^^xsd:nonNegativeInteger ;\n\t'
+    def endIndexStatement(self):
+        if self.endIndex is not None:
+            return 'nif:endIndex            "' + str(self.endIndex) + '"^^xsd:nonNegativeInteger ;\n\t'
         return ''
 
-    @endIndex.setter
-    def endIndex(self, value):
-        self._endIndex = value
-
-    @endIndex.deleter
-    def endIndex(self):
-        del self._endIndex
-
     @property
-    def types(self):
-        return self._types
-
-    @types.setter
-    def types(self, value):
-        self._types = value
-
-    @types.deleter
-    def types(self):
-        del self._types
-
-    @property
-    def score(self):
-        if self._score is not None:
-            return 'itsrdf:taConfidence     "' + str(self._score) + '^^xsd:double ;\n\t'
+    def scoreStatement(self):
+        if self.score is not None:
+            return 'itsrdf:taConfidence     "' + str(self.score) + '"^^xsd:double ;\n\t'
         return ''
 
-    @score.setter
-    def score(self, value):
-        self._score = value
-
-    @score.deleter
-    def score(self):
-        del self._score
-
     @property
-    def taIdentRef(self):
-        if self._taIdentRef is not None:
-            return 'itsrdf:taIdentRef       <' + self._taIdentRef + '> .'
+    def taIdentRefStatement(self):
+        if self.taIdentRef is not None:
+            return 'itsrdf:taIdentRef       <' + self.taIdentRef + '> .'
         return ''
 
-    @taIdentRef.setter
-    def taIdentRef(self, value):
-        self._taIdentRef = value
-
-    @taIdentRef.deleter
-    def taIdentRef(self):
-        del self._taIdentRef
-
     @property
-    def taClassRef(self):
-        return self._taClassRef
-
-    @taClassRef.setter
-    def taClassRef(self, value):
-        self._taClassRef = value
-
-    @taClassRef.deleter
-    def taClassRef(self):
-        del self._taClassRef
-
-    @property
-    def referenceContext(self):
-        if self._referenceContext is not None:
-            return 'nif:referenceContext    <' + self._referenceContext + '> ;' + '\n\t'
+    def referenceContextStatement(self):
+        if self.referenceContext is not None:
+            return 'nif:referenceContext    <' + self.referenceContext + '> ;' + '\n\t'
         return ''
-
-    @referenceContext.setter
-    def referenceContext(self, value):
-        self._referenceContext = value
-
-    @referenceContext.deleter
-    def referenceContext(self):
-        del self._referenceContext
+    
+    @property
+    def referenceStatement(self):
+        return self.taIdentRef + '/#offset_' + str(self.beginIndex) + '_' + str(self.endIndex)
 
     @property
-    def reference(self):
-        return self._taIdentRef + '/#offset_' + str(self._beginIndex) + '_' + str(self._endIndex)
-
-    @property
-    def toClassRef(self):
+    def toClassRefStatement(self):
         result = ''
-        if self._taClassRef is not None:
-            for index, currentClassRef in enumerate(self._taClassRef):
+        if self.taClassRef is not None:
+            for index, currentClassRef in enumerate(self.taClassRef):
                 if (index > 0):
                     result += '<' + currentClassRef + '> , '
 
@@ -178,19 +83,33 @@ class NIFBean(object):
         return 'a                       nif:OffsetBasedString , nif:Phrase ;' + '\n\t'
 
     @property
-    def beanContext(self):
-        return '<' + self._context + '/#offset_' + str(self._beginIndex) + '_' + str(self._endIndex) + '>' + '\n\t'
+    def beanContextStatement(self):
+        return '<' + self.context + '/#offset_' + str(self.beginIndex) + '_' + str(self.endIndex) + '>' + '\n\t'
 
     @property
     def turtle(self):
-        return  self.beanContext + \
+        return  self.beanContextStatement + \
                 self.nifBeanProperty + \
-                self.mention + \
-                self.beginIndex + \
-                self.endIndex + \
-                self.referenceContext + \
-                self.taMsClassRef + \
-                self.annotator + \
-                self.toClassRef +\
-                self.score + \
-                self.taIdentRef
+                self.mentionStatement + \
+                self.beginIndexStatement + \
+                self.endIndexStatement + \
+                self.referenceContextStatement + \
+                self.taMsClassRefStatement + \
+                self.annotatorStatement + \
+                self.toClassRefStatement +\
+                self.scoreStatement + \
+                self.taIdentRefStatement
+                
+    def __str__(self):
+        return self.__repr__()
+    
+    def __repr__(self):
+        if (self.mention is not None
+            and self.beginIndex is not None
+            and self.endIndex is not None):
+            mention = self.mention
+            if len(mention) > 50:
+                mention = mention[:50]+'...'
+            return '<Bean {}-{}: {}>'.format(self.beginIndex, self.endIndex, repr(mention))
+        else:
+            return '<Bean (undefined)>'

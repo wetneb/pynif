@@ -1,67 +1,40 @@
+from .bean import NIFBean
+
 class NIFContext(object):
 
     def __init__(self):
-        self._baseURI = None
-        self._beginIndex = None
-        self._endIndex = None
-        self._mention = None
+        self.baseURI = None
+        self.beginIndex = None
+        self.endIndex = None
+        self.mention = None
+        self.beans = []
+
+    def addBean(self, beginIndex=None, endIndex=None):
+        bean = NIFBean()
+        bean.context = self.baseURI
+        bean.referenceContext = self.referenceContext
+        bean.beginIndex = beginIndex
+        bean.endIndex = endIndex
+        if beginIndex is not None and endIndex is not None:
+            bean.mention = self.mention[beginIndex:endIndex]
+        self.beans.append(bean)
+        return bean
 
     @property
-    def baseURI(self):
-        return self._baseURI
-
-    @baseURI.setter
-    def baseURI(self, value):
-        self._baseURI = value
-
-    @baseURI.deleter
-    def baseURI(self):
-        del self._baseURI
-
-    @property
-    def beginIndex(self):
-        if self._beginIndex is not None:
-            return 'nif:beginIndex  "' + str(self._beginIndex) + '"^^xsd:nonNegativeInteger ;\n\t'
+    def beginIndexStatement(self):
+        if self.beginIndex is not None:
+            return 'nif:beginIndex  "' + str(self.beginIndex) + '"^^xsd:nonNegativeInteger ;\n\t'
         return ''
 
-    @beginIndex.setter
-    def beginIndex(self, value):
-        self._beginIndex = value
-
-    @beginIndex.deleter
-    def beginIndex(self):
-        del self._beginIndex
-
     @property
-    def endIndex(self):
-        if self._endIndex is not None:
-            return 'nif:endIndex    "' + str(self._endIndex) + '"^^xsd:nonNegativeInteger ;\n\t'
+    def endIndexStatement(self):
+        if self.endIndex is not None:
+            return 'nif:endIndex    "' + str(self.endIndex) + '"^^xsd:nonNegativeInteger ;\n\t'
         return ''
-
-    @endIndex.setter
-    def endIndex(self, value):
-        self._endIndex = value
-
-
-    @endIndex.deleter
-    def endIndex(self):
-        del self._endIndex
-
-    @property
-    def mention(self):
-        return self._mention
-
-    @mention.setter
-    def mention(self, value):
-        self._mention = value
-
-    @mention.deleter
-    def mention(self):
-        del self._mention
 
     @property
     def referenceContext(self):
-        return  self._baseURI + '/#offset_' + str(self._beginIndex) + '_' + str(self._endIndex)
+        return  self.baseURI + '/#offset_' + str(self.beginIndex) + '_' + str(self.endIndex)
 
     @property
     def nifContextProperty(self):
@@ -69,11 +42,29 @@ class NIFContext(object):
 
     @property
     def turtle(self):
-        return '<' + self.referenceContext + '>\n\t' + \
+        initial_turtle = '<' + self.referenceContext + '>\n\t' + \
                self.nifContextProperty + \
-               self.beginIndex + \
-               self.endIndex + \
-               'nif:isString    "' + self._mention + '" . \n\n<' + self._baseURI+ '/#collection>' +\
+               self.beginIndexStatement + \
+               self.endIndexStatement + \
+               'nif:isString    "' + self.mention.replace('"', '\\"') + '" .\n\n<' + self.baseURI+ '/#collection>' +\
                '\n\ta               nif:ContextCollection ;' + \
                '\n\tnif:hasContext\t<' + self.referenceContext +'>\n\t' +\
-               '<http://purl.org/dc/terms/conformsTo>\n\t\t<http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core/2.1> .\t\t'
+               '<http://purl.org/dc/terms/conformsTo>\n\t\t<http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core/2.1> .\n\n'
+               
+        beans_turtle = '\n\n'.join(bean.turtle for bean in self.beans)
+        return initial_turtle + beans_turtle
+    
+    def __str__(self):
+        return self.__repr__()
+    
+    def __repr__(self):
+        if (self.mention is not None
+            and self.beginIndex is not None
+            and self.endIndex is not None):
+            mention = self.mention
+            if len(mention) > 50:
+                mention = mention[:50]+'...'
+            return '<NIFContext {}-{}: {}>'.format(self.beginIndex, self.endIndex, repr(mention))
+        else:
+            return '<NIFContext (undefined)>'           
+    
