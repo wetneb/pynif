@@ -101,3 +101,7 @@ ENV/
 .mypy_cache/
 
 .idea
+
+# PyDev
+.project
+.pydevproject
