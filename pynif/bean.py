@@ -1,4 +1,8 @@
 
+from rdflib import URIRef, Literal, Graph
+from .prefixes import NIF, XSD, ITSRDF, RDF
+from .prefixes import NIFPrefixes
+
 class NIFBean(object):
     """
     Represents an annotation in a document.
@@ -15,91 +19,46 @@ class NIFBean(object):
         self.taClassRef = None
         self.referenceContext = None
         self.taMsClassRef = None
-
+        
     @property
-    def taMsClassRefStatement(self):
-        if self.taMsClassRef is not None:
-            return 'nif:taMsClassRef        <' + self.taMsClassRef + '> ;' + '\n\t'
-        return ''
+    def uri(self):
+        return URIRef(self.context + '/#offset_' + str(self.beginIndex) + '_' + str(self.endIndex))
 
-    @property
-    def annotatorStatement(self):
+    def triples(self):
+        """
+        Returns the representation of the bean as RDF triples
+        """
+        yield (self.uri, RDF.type, NIF.OffsetBasedString)
+        yield (self.uri, RDF.type, NIF.Phrase)
+        yield (self.uri, NIF.anchorOf, Literal(self.mention))
+        yield (self.uri, NIF.beginIndex, Literal(self.beginIndex, datatype=XSD.nonNegativeInteger))
+        yield (self.uri, NIF.endIndex, Literal(self.endIndex, datatype=XSD.nonNegativeInteger))
+
         if self.annotator is not None:
-            return 'itsrdf:taAnnotatorsRef  <' + self.annotator + '> ;' + '\n\t'
-        return ''
-
-    @property
-    def mentionStatement(self):
-        if self.mention is not None:
-           return  'nif:anchorOf            "' + self.mention + '" ;\n\t'
-        return ''
-
-    @property
-    def beginIndexStatement(self):
-        if self.beginIndex is not None:
-            return 'nif:beginIndex          "' + str(self.beginIndex) + '"^^xsd:nonNegativeInteger ;\n\t'
-        return ''
-
-    @property
-    def endIndexStatement(self):
-        if self.endIndex is not None:
-            return 'nif:endIndex            "' + str(self.endIndex) + '"^^xsd:nonNegativeInteger ;\n\t'
-        return ''
-
-    @property
-    def scoreStatement(self):
+            yield (self.uri, ITSRDF.taAnnotatorsRef, URIRef(self.annotator))
         if self.score is not None:
-            return 'itsrdf:taConfidence     "' + str(self.score) + '"^^xsd:double ;\n\t'
-        return ''
-
-    @property
-    def taIdentRefStatement(self):
+            yield (self.uri, ITSRDF.taConfidence, Literal(str(float(self.score)), datatype=XSD.double, normalize=False))
         if self.taIdentRef is not None:
-            return 'itsrdf:taIdentRef       <' + self.taIdentRef + '> .'
-        return ''
-
-    @property
-    def referenceContextStatement(self):
+            yield (self.uri, ITSRDF.taIdentRef, URIRef(self.taIdentRef))
+        if self.taMsClassRef is not None:
+            yield (self.uri, NIF.taMsClassRef, URIRef(self.taMsClassRef))
+        for currentClassRef in self.taClassRef or []:
+            yield (self.uri, ITSRDF.taClassRef, URIRef(currentClassRef))
         if self.referenceContext is not None:
-            return 'nif:referenceContext    <' + self.referenceContext + '> ;' + '\n\t'
-        return ''
-    
-    @property
-    def referenceStatement(self):
-        return self.taIdentRef + '/#offset_' + str(self.beginIndex) + '_' + str(self.endIndex)
+            yield (self.uri, NIF.referenceContext, URIRef(self.referenceContext))
+        if self.taMsClassRef is not None:
+            yield (self.uri, NIF.taMsClassRef, URIRef(self.taMsClassRef))
 
-    @property
-    def toClassRefStatement(self):
-        result = ''
-        if self.taClassRef is not None:
-            for index, currentClassRef in enumerate(self.taClassRef):
-                if (index > 0):
-                    result += '<' + currentClassRef + '> , '
-
-        return 'itsrdf:taClassRef       '  + result + ' ;\n\t'
-
-    @property
-    def nifBeanProperty(self):
-        return 'a                       nif:OffsetBasedString , nif:Phrase ;' + '\n\t'
-
-    @property
-    def beanContextStatement(self):
-        return '<' + self.context + '/#offset_' + str(self.beginIndex) + '_' + str(self.endIndex) + '>' + '\n\t'
 
     @property
     def turtle(self):
-        return  self.beanContextStatement + \
-                self.nifBeanProperty + \
-                self.mentionStatement + \
-                self.beginIndexStatement + \
-                self.endIndexStatement + \
-                self.referenceContextStatement + \
-                self.taMsClassRefStatement + \
-                self.annotatorStatement + \
-                self.toClassRefStatement +\
-                self.scoreStatement + \
-                self.taIdentRefStatement
-                
+        graph = Graph()
+        for triple in self.triples():
+            graph.add(triple)
+        
+        graph.namespace_manager = NIFPrefixes().manager
+        return graph.serialize(format='turtle')
+
     def __str__(self):
         return self.__repr__()
     

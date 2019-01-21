@@ -1,6 +1,7 @@
 
 import unittest
 from pynif.bean import NIFBean
+from .util import turtle_equal
 
 class BeanTest(unittest.TestCase):
     
@@ -26,16 +27,19 @@ class BeanTest(unittest.TestCase):
         b.score = 1
         b.taIdentRef = 'http://dbpedia.org/resource/Afghanistan'
         
-        target_ttl = """<http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_91_102>
+        target_ttl = """@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+@prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+        
+<http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_91_102>
 \ta                       nif:OffsetBasedString , nif:Phrase ;
 \tnif:anchorOf            "Afghanistan" ;
 \tnif:beginIndex          "91"^^xsd:nonNegativeInteger ;
 \tnif:endIndex            "102"^^xsd:nonNegativeInteger ;
 \tnif:referenceContext    <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_0_1413> ;
-\titsrdf:taClassRef        ;
 \titsrdf:taConfidence     "1"^^xsd:double ;
 \titsrdf:taIdentRef       <http://dbpedia.org/resource/Afghanistan> .
         """
-        
-        self.assertEqual(target_ttl.strip(), b.turtle.strip())
+
+        self.assertTrue(turtle_equal(target_ttl, b.turtle))
         
