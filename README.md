@@ -1,4 +1,4 @@
-## pyNIF-lib
+# pynif
 
 [![Build Status](https://travis-ci.org/wetneb/pynif.svg?branch=master)](https://travis-ci.org/wetneb/pynif)
 
@@ -11,7 +11,7 @@ The NLP Interchange Format (NIF) is an RDF/OWL-based format that aims to achieve
 [NIF Documentation](http://persistence.uni-leipzig.org/nlp2rdf/)
 
 
-## Supported versions
+## Supported NIF versions
 
  * 2.1
 
