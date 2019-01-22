@@ -13,6 +13,7 @@ class NIFContext(object):
         self.beginIndex = None
         self.endIndex = None
         self.mention = None
+        self.sourceUrl = None
         self.beans = []
         self.original_uri = None
         self.original_collection_uri = None
@@ -43,7 +44,7 @@ class NIFContext(object):
     
     @property
     def collection_uri(self):
-        return URIRef(self.original_collection_uri or self.baseURI + '/#collection')
+        return URIRef(self.original_collection_uri or self.uri.toPython() + '/#collection')
     
     def triples(self):
         """
@@ -54,10 +55,17 @@ class NIFContext(object):
         yield (self.uri, NIF.beginIndex, Literal(self.beginIndex, datatype=XSD.nonNegativeInteger))
         yield (self.uri, NIF.endIndex, Literal(self.endIndex, datatype=XSD.nonNegativeInteger))
         yield (self.uri, NIF.isString, Literal(self.mention))
+        if self.sourceUrl is not None:
+            yield (self.uri, NIF.sourceUrl, URIRef(self.sourceUrl))
         
         yield (self.collection_uri, RDF.type, NIF.ContextCollection)
         yield (self.collection_uri, NIF.hasContext, self.uri)
         yield (self.collection_uri, DCTERMS.conformsTo, URIRef(nif_ontology_uri))
+        
+                     
+        for bean in self.beans:
+            for triple in bean.triples():
+                yield triple
         
     @classmethod
     def load_from_graph(cls, graph, uri):
@@ -75,6 +83,8 @@ class NIFContext(object):
                 context.beginIndex = o.toPython()
             elif p == NIF.endIndex:
                 context.endIndex = o.toPython()
+            elif p == NIF.sourceUrl:
+                context.sourceUrl = o.toPython()
  
         # Load collection
         for s,p,o in graph.triples((None, NIF.hasContext, uri)):
@@ -92,10 +102,6 @@ class NIFContext(object):
         graph = Graph()
         for triple in self.triples():
             graph.add(triple)
-            
-        for bean in self.beans:
-            for triple in bean.triples():
-                graph.add(triple)
         
         graph.namespace_manager = NIFPrefixes().manager
         return graph.serialize(format='turtle')

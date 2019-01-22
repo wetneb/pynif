@@ -16,8 +16,14 @@ class NIF21():
         self._obj_context.mention = mention
         self._obj_contextes.append(self._obj_context)
 
-    def bean(self, mention, beginIndex, endIndex, taClassRef, score, annotator, taIdentRef, taMsClassRef):
-        bean = self._obj_context.addBean(beginIndex, endIndex)
+    def bean(self, beginIndex,
+             endIndex,
+             taClassRef=None,
+             score=None,
+             annotator=None,
+             taIdentRef=None,
+             taMsClassRef=None):
+        bean = self._obj_context.add_bean(beginIndex, endIndex)
         bean.taClassRef = taClassRef
         bean.score = score
         bean.annotator = annotator

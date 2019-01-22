@@ -20,6 +20,7 @@ class NIFBean(object):
         self.referenceContext = None
         self.taMsClassRef = None
         self.original_uri = None
+        self.source = None
         
     @property
     def uri(self):
@@ -53,6 +54,8 @@ class NIFBean(object):
             yield (self.uri, NIF.referenceContext, URIRef(self.referenceContext))
         if self.taMsClassRef is not None:
             yield (self.uri, NIF.taMsClassRef, URIRef(self.taMsClassRef))
+        if self.source is not None:
+            yield (self.uri, ITSRDF.taSource, Literal(self.source, datatype=XSD.string))
             
     @classmethod
     def load_from_graph(cls, graph, uri):
@@ -69,6 +72,8 @@ class NIFBean(object):
                 bean.beginIndex = o.toPython()
             elif p == NIF.endIndex:
                 bean.endIndex = o.toPython()
+            elif p == NIF.referenceContext:
+                bean.referenceContext = o.toPython()
             elif p == ITSRDF.taAnnotatorsRef:
                 bean.annotator = o.toPython()
             elif p == ITSRDF.taConfidence:
@@ -81,6 +86,8 @@ class NIFBean(object):
                 if bean.taClassRef is None:
                     bean.taClassRef = []
                 bean.taClassRef.append(o.toPython())
+            elif p == ITSRDF.taSource:
+                bean.source = o.toPython()
         return bean
 
     @property
