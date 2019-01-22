@@ -1,11 +1,11 @@
 from rdflib import URIRef, Literal, Graph
-from .bean import NIFBean
+from .phrase import NIFPhrase
 from .prefixes import NIF, XSD, ITSRDF, RDF, DCTERMS, nif_ontology_uri
 from .prefixes import NIFPrefixes
 
 class NIFContext(object):
     """
-    A context is a string which can be annotated by beans.
+    A context is a string which can be annotated by phrases.
     """
 
     def __init__(self,
@@ -23,9 +23,9 @@ class NIFContext(object):
         if mention is not None and endIndex is None:
             self.endIndex = len(mention)
         self.sourceUrl = sourceUrl
-        self.beans = []
+        self.phrases = []
 
-    def add_bean(self,
+    def add_phrase(self,
             beginIndex=None,
             endIndex=None,    
             annotator = None,
@@ -38,9 +38,9 @@ class NIFContext(object):
         """
         Creates a new annotation in this document.
         
-        :returns: the new {@class NIFBean}
+        :returns: the new {@class NIFPhrase}
         """
-        bean = NIFBean(context = self.original_uri,
+        phrase = NIFPhrase(context = self.original_uri,
                 beginIndex = beginIndex,
                 endIndex = endIndex,
                 annotator = annotator,
@@ -51,9 +51,9 @@ class NIFContext(object):
                 uri = uri,
                 source = source)
         if beginIndex is not None and endIndex is not None:
-            bean.mention = self.mention[beginIndex:endIndex]
-        self.beans.append(bean)
-        return bean
+            phrase.mention = self.mention[beginIndex:endIndex]
+        self.phrases.append(phrase)
+        return phrase
     
     @property
     def uri(self):
@@ -71,15 +71,15 @@ class NIFContext(object):
         if self.sourceUrl is not None:
             yield (self.uri, NIF.sourceUrl, URIRef(self.sourceUrl))
                
-        for bean in self.beans:
-            for triple in bean.triples():
+        for phrase in self.phrases:
+            for triple in phrase.triples():
                 yield triple
         
     @classmethod
     def load_from_graph(cls, graph, uri):
         """
         Given a RDF graph and a URI which represents a context in
-        that graph, load the corresponding context and its child beans.
+        that graph, load the corresponding context and its child phrases.
         """
         context = cls()
         context.original_uri = uri.toPython()
@@ -94,10 +94,10 @@ class NIFContext(object):
             elif p == NIF.sourceUrl:
                 context.sourceUrl = o.toPython()
             
-        # Load child beans
+        # Load child phrases
         for s,p,o in graph.triples((None, NIF.referenceContext, uri)):
-             bean = NIFBean.load_from_graph(graph, s)
-             context.beans.append(bean)
+             phrase = NIFPhrase.load_from_graph(graph, s)
+             context.phrases.append(phrase)
              
         return context
 
@@ -130,7 +130,7 @@ class NIFContext(object):
             self.endIndex,
             self.mention,
             self.sourceUrl,
-            set(self.beans))
+            set(self.phrases))
     
     def __eq__(self, other):
         return self._tuple() == other._tuple()

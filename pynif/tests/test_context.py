@@ -4,7 +4,7 @@ from pynif.context import NIFContext
 from .util import turtle_equal
 from rdflib import Graph, URIRef
 
-class ContextTest(unittest.TestCase):
+class NIFContextTest(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
@@ -38,11 +38,11 @@ class ContextTest(unittest.TestCase):
         b.original_uri = 'http://example.com/my_annotation'
         self.assertEqual('http://example.com/my_annotation', str(b.uri))
         
-    def test_add_bean(self):
+    def test_add_phrase(self):
         c = NIFContext(uri = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0',
                        mention = self.example_text)
         
-        b = c.add_bean(91, 102)
+        b = c.add_phrase(91, 102)
         self.assertEqual(91, b.beginIndex)
         self.assertEqual(102, b.endIndex)
         self.assertEqual("Afghanistan", b.mention)

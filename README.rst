@@ -30,21 +30,21 @@ Supported RDF formats
 Usage
 -----
 
-0) Import and create a dataset
+0) Import and create a collection
 
 ::
 
-   from pynif import NIFDataset
+   from pynif import NIFCollection
 
 
-   dataset = NIFDataset(uri="http://freme-project.eu")
+   collection = NIFCollection(uri="http://freme-project.eu")
            
 
 1) Create a context
 
 ::
 
-   context = dataset.add_context(
+   context = collection.add_context(
        uri="http://freme-project.eu/doc32",
        mention="Diego Maradona is from Argentina.")
 
@@ -52,7 +52,7 @@ Usage
 
 ::
 
-   context.add_bean(
+   context.add_phrase(
        beginIndex=0,
        endIndex=14,
        taClassRef=['http://dbpedia.org/ontology/SportsManager', 'http://dbpedia.org/ontology/Person', 'http://nerd.eurecom.fr/ontology#Person'],
@@ -61,7 +61,7 @@ Usage
        taIdentRef='http://dbpedia.org/resource/Diego_Maradona',
        taMsClassRef='http://dbpedia.org/ontology/SoccerManager')
 
-   context.add_bean(
+   context.add_phrase(
        beginIndex=23,
        endIndex=32,
        taClassRef=['http://dbpedia.org/ontology/PopulatedPlace', 'http://nerd.eurecom.fr/ontology#Location',
@@ -74,18 +74,18 @@ Usage
 
 ::
 
-   generated_nif = dataset.dumps(format='turtle')
+   generated_nif = collection.dumps(format='turtle')
    print(generated_nif)
 
 You can then parse it back:
 
 ::
 
-   parsed_dataset = NIFDataset.loads(generated_nif)
+   parsed_collection = NIFCollection.loads(generated_nif)
 
-   for context in parsed_dataset.contexts:
-      for bean in context.beans:
-          print(bean)
+   for context in parsed_collection.contexts:
+      for phrase in context.phrases:
+          print(phrase)
 
 Issues
 ------

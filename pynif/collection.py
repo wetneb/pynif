@@ -2,10 +2,10 @@ from .context import NIFContext
 from rdflib import Graph, URIRef
 from .prefixes import RDF, NIF, DCTERMS, NIFPrefixes, nif_ontology_uri
 
-class NIFDataset(object):
+class NIFCollection(object):
     """
-    A dataset (or context collection) is a set of contexts (snippets of texts that
-    are annotated by beans).
+    A collection (or context collection) is a set of contexts (snippets of texts that
+    are annotated by phrases).
     """
     
     def __init__(self, uri=None):
@@ -18,7 +18,7 @@ class NIFDataset(object):
         
     def add_context(self, uri, mention, beginIndex=None, endIndex=None):
         """
-        Adds a context to the dataset. Returns the context.
+        Adds a context to the collection. Returns the context.
         """
         c = NIFContext(uri=uri, mention=mention, beginIndex=beginIndex, endIndex=endIndex)
         self.contexts.append(c)
@@ -26,7 +26,7 @@ class NIFDataset(object):
         
     def triples(self):
         """
-        Generates all the triples used to represent this dataset.
+        Generates all the triples used to represent this collection.
         """
         if self.original_uri is not None:
             yield (self.uri, RDF.type, NIF.ContextCollection)
@@ -42,7 +42,7 @@ class NIFDataset(object):
     def load_from_graph(cls, graph, uri=None):
         """
         Given a RDF graph, load all the contexts it contains
-        as one dataset object.
+        as one collection object.
         
         If no URI is provided, all the nif:Context in the graph
         will be loaded (compatibility with NIF 2.0).
@@ -51,7 +51,7 @@ class NIFDataset(object):
         if uri is not None:
             uri_ref = uri.toPython()
             
-        dataset = NIFDataset(uri=uri_ref)
+        collection = NIFCollection(uri=uri_ref)
         # Load collection
         if uri is not None:
             context_uris = [o for s,p,o in graph.triples((uri, NIF.hasContext, None))]
@@ -60,17 +60,17 @@ class NIFDataset(object):
         
         for u in context_uris:
             context = NIFContext.load_from_graph(graph, u)
-            dataset.contexts.append(context)
+            collection.contexts.append(context)
 
-        return dataset
+        return collection
     
     @classmethod
     def loads(cls, data, format='turtle', uri=None):
         """
-        Load a dataset from a string representation of an RDF graph.
+        Load a collection from a string representation of an RDF graph.
         
-        If no URI for the dataset is provided, we scan the graph to find
-        the first ContextCollection in it. In there isn't any, the dataset
+        If no URI for the collection is provided, we scan the graph to find
+        the first ContextCollection in it. In there isn't any, the collection
         will load all available nif:Context in the graph.
         """
         g = Graph().parse(format=format,data=data)
@@ -95,7 +95,7 @@ class NIFDataset(object):
         return self.__repr__()
     
     def __repr__(self):
-        return '<NIFDataset {}>'.format(self.uri)
+        return '<NIFCollection {}>'.format(self.uri)
     
     def __eq__(self, other):
          return (self.uri == other.uri and set(self.contexts) == set(other.contexts))

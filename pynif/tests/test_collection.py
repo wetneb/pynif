@@ -1,9 +1,9 @@
 import unittest
 import os
-from pynif.dataset import NIFDataset
+from pynif.collection import NIFCollection
 from .util import turtle_equal
 
-class DatasetTests(unittest.TestCase):
+class NIFCollectionTest(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
@@ -18,60 +18,59 @@ class DatasetTests(unittest.TestCase):
             cls.example_maradona = f.read()
     
     def test_serialize_nif21(self):
-        dataset = NIFDataset.loads(self.example_nif21)
+        collection = NIFCollection.loads(self.example_nif21)
         
-        self.assertEqual(1, len(dataset.contexts))
-        context = dataset.contexts[0]
-        self.assertEqual(3, len(context.beans))
+        self.assertEqual(1, len(collection.contexts))
+        context = collection.contexts[0]
+        self.assertEqual(3, len(context.phrases))
         
-        in_nif = dataset.dumps()
+        in_nif = collection.dumps()
         
         self.assertTrue(turtle_equal(self.example_nif21, in_nif))
         
     def test_serialize_nif20(self):
-        dataset = NIFDataset.loads(self.example_nif20)
+        collection = NIFCollection.loads(self.example_nif20)
         
-        self.assertEqual(1, len(dataset.contexts))
-        context = dataset.contexts[0]
-        self.assertEqual(3, len(context.beans))
+        self.assertEqual(1, len(collection.contexts))
+        context = collection.contexts[0]
+        self.assertEqual(3, len(context.phrases))
         
-        in_nif = dataset.dumps()
+        in_nif = collection.dumps()
         
         self.assertTrue(turtle_equal(self.example_nif20_normalized, in_nif))
         
     def test_create(self):
-        dataset = NIFDataset(uri="http://freme-project.eu")
+        collection = NIFCollection(uri="http://freme-project.eu")
         
-        context = dataset.add_context(
+        context = collection.add_context(
             uri="http://freme-project.eu/doc32",
             mention="Diego Maradona is from Argentina.")
         
-        context.add_bean(
+        context.add_phrase(
            beginIndex=0,
            endIndex=14,
            taClassRef=['http://dbpedia.org/ontology/SportsManager', 'http://dbpedia.org/ontology/Person', 'http://nerd.eurecom.fr/ontology#Person'],
-           score=0.9869992701528016,
+           score=0.9869,
            annotator='http://freme-project.eu/tools/freme-ner',
            taIdentRef='http://dbpedia.org/resource/Diego_Maradona',
            taMsClassRef='http://dbpedia.org/ontology/SoccerManager')
         
-        context.add_bean(
+        context.add_phrase(
            beginIndex=23,
            endIndex=32,
            taClassRef=['http://dbpedia.org/ontology/PopulatedPlace', 'http://nerd.eurecom.fr/ontology#Location',
             'http://dbpedia.org/ontology/Place'],
-           score=0.9804963628413852,
+           score=0.9804,
            annotator='http://freme-project.eu/tools/freme-ner',
            taMsClassRef='http://dbpedia.org/resource/Argentina')
 
-        generated_nif = dataset.dumps(format='turtle')
+        generated_nif = collection.dumps(format='turtle').decode('utf-8')
         self.assertTrue(turtle_equal(self.example_maradona, generated_nif))
         
-        parsed_dataset = NIFDataset.loads(generated_nif)
-        parsed_context = parsed_dataset.contexts[0]
+        parsed_collection = NIFCollection.loads(generated_nif)
+        parsed_context = parsed_collection.contexts[0]
         
-        self.assertEqual(1, len(parsed_dataset.contexts))
-        self.assertEqual(context._tuple(), parsed_context._tuple())
-        self.assertEqual(dataset, parsed_dataset)
+        self.assertEqual(1, len(parsed_collection.contexts))
+        self.assertEqual(collection, parsed_collection)
         
         

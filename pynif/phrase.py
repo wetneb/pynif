@@ -3,7 +3,7 @@ from rdflib import URIRef, Literal, Graph
 from .prefixes import NIF, XSD, ITSRDF, RDF
 from .prefixes import NIFPrefixes
 
-class NIFBean(object):
+class NIFPhrase(object):
     """
     Represents an annotation in a document.
     """
@@ -42,7 +42,7 @@ class NIFBean(object):
 
     def triples(self):
         """
-        Returns the representation of the bean as RDF triples
+        Returns the representation of the phrase as RDF triples
         """
         yield (self.uri, RDF.type, NIF.OffsetBasedString)
         yield (self.uri, RDF.type, NIF.Phrase)
@@ -70,35 +70,35 @@ class NIFBean(object):
     @classmethod
     def load_from_graph(cls, graph, uri):
         """
-        Given a RDF graph and a URI which represents a bean in
-        that graph, load the corresponding bean.
+        Given a RDF graph and a URI which represents a phrase in
+        that graph, load the corresponding phrase.
         """
-        bean = cls()
-        bean.original_uri = uri
+        phrase = cls()
+        phrase.original_uri = uri
         for s,p,o in graph.triples((uri, None, None)):
             if p == NIF.anchorOf:
-                bean.mention = o.toPython()
+                phrase.mention = o.toPython()
             elif p == NIF.beginIndex:
-                bean.beginIndex = o.toPython()
+                phrase.beginIndex = o.toPython()
             elif p == NIF.endIndex:
-                bean.endIndex = o.toPython()
+                phrase.endIndex = o.toPython()
             elif p == NIF.referenceContext:
-                bean.context = o.toPython()
+                phrase.context = o.toPython()
             elif p == ITSRDF.taAnnotatorsRef:
-                bean.annotator = o.toPython()
+                phrase.annotator = o.toPython()
             elif p == ITSRDF.taConfidence:
-                bean.score = o.toPython()
+                phrase.score = o.toPython()
             elif p == ITSRDF.taIdentRef:
-                bean.taIdentRef = o.toPython()
+                phrase.taIdentRef = o.toPython()
             elif p == NIF.taMsClassRef:
-                bean.taMsClassRef = o.toPython()
+                phrase.taMsClassRef = o.toPython()
             elif p == ITSRDF.taClassRef:
-                if bean.taClassRef is None:
-                    bean.taClassRef = []
-                bean.taClassRef.append(o.toPython())
+                if phrase.taClassRef is None:
+                    phrase.taClassRef = []
+                phrase.taClassRef.append(o.toPython())
             elif p == ITSRDF.taSource:
-                bean.source = o.toPython()
-        return bean
+                phrase.source = o.toPython()
+        return phrase
 
     @property
     def turtle(self):
@@ -119,9 +119,9 @@ class NIFBean(object):
             mention = self.mention
             if len(mention) > 50:
                 mention = mention[:50]+'...'
-            return '<Bean {}-{}: {}>'.format(self.beginIndex, self.endIndex, repr(mention))
+            return '<NIFPhrase {}-{}: {}>'.format(self.beginIndex, self.endIndex, repr(mention))
         else:
-            return '<Bean (undefined)>'
+            return '<NIFPhrase (undefined)>'
         
     def _tuple(self):
         return (self.context,
@@ -131,9 +131,9 @@ class NIFBean(object):
         self.endIndex,
         self.score,
         self.taIdentRef,
-        self.taClassRef,
+        set(self.taClassRef),
         self.taMsClassRef,
-        self.original_uri,
+        self.uri,
         self.source)
         
     def __eq__(self, other):

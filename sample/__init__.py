@@ -5,7 +5,7 @@ def main():
 
     nif21.context("http://freme-project.eu", 0, 33, "Diego Maradona is from Argentina.")
 
-    nif21.bean('Diego Maradona',
+    nif21.phrase('Diego Maradona',
                0,
                14,
                ['http://dbpedia.org/ontology/SportsManager', 'http://dbpedia.org/ontology/Person',
@@ -15,7 +15,7 @@ def main():
                'http://dbpedia.org/resource/Diego_Maradona',
                'http://dbpedia.org/ontology/SoccerManager')
 
-    nif21.bean('Argentina',
+    nif21.phrase('Argentina',
                23,
                32,
                ['http://dbpedia.org/ontology/PopulatedPlace', 'http://nerd.eurecom.fr/ontology#Location',
