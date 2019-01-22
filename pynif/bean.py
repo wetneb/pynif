@@ -38,7 +38,7 @@ class NIFBean(object):
         
     @property
     def generated_uri(self):
-        return self.context + '/#offset_' + str(self.beginIndex) + '_' + str(self.endIndex)
+        return self.context.split('#')[0] + '#offset_' + str(self.beginIndex) + '_' + str(self.endIndex)
 
     def triples(self):
         """

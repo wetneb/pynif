@@ -56,16 +56,8 @@ class NIFContext(object):
         return bean
     
     @property
-    def generated_uri(self):
-        return  self.baseURI + '/#offset_' + str(self.beginIndex) + '_' + str(self.endIndex)
-    
-    @property
     def uri(self):
-        return URIRef(self.original_uri or self.generated_uri)
-    
-    @property
-    def collection_uri(self):
-        return URIRef(self.original_collection_uri or self.uri.toPython() + '/#collection')
+        return URIRef(self.original_uri)
     
     def triples(self):
         """

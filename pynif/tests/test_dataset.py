@@ -64,7 +64,9 @@ class DatasetTests(unittest.TestCase):
            annotator='http://freme-project.eu/tools/freme-ner',
            taMsClassRef='http://dbpedia.org/resource/Argentina')
 
-        generated_nif = dataset.dumps()
+        generated_nif = dataset.dumps(format='turtle')
+        with open('/tmp/a', 'w') as f:
+            f.write(generated_nif.decode('utf-8'))
         self.assertTrue(turtle_equal(self.example_maradona, generated_nif))
         
         

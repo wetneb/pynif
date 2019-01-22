@@ -39,8 +39,7 @@ class BeanTest(unittest.TestCase):
         
     def test_to_turtle(self):
         b = NIFBean()
-        b.context = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0'
-        b.referenceContext = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_0_1413'
+        b.context = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_0_1413'
         b.mention = 'Afghanistan'
         b.beginIndex = 91
         b.endIndex = 102

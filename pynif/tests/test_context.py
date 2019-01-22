@@ -19,12 +19,6 @@ class ContextTest(unittest.TestCase):
                 nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
                 nif:endIndex    "{}"^^xsd:nonNegativeInteger ;
                 nif:isString    "{}" .
-            
-            <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#collection>
-                a               nif:ContextCollection ;
-                nif:hasContext\t<http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_0_1411> ;
-                <http://purl.org/dc/terms/conformsTo>
-                    <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core/2.1> .
         """.format(len(cls.example_text), cls.example_text.replace('"', '\\"'))
     
     def test_to_string_undefined(self):
@@ -45,11 +39,8 @@ class ContextTest(unittest.TestCase):
         self.assertEqual('http://example.com/my_annotation', str(b.uri))
         
     def test_add_bean(self):
-        c = NIFContext()
-        c.baseURI = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0'
-        c.beginIndex = 0
-        c.endIndex = len(self.example_text)
-        c.mention = self.example_text
+        c = NIFContext(uri = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0',
+                       mention = self.example_text)
         
         b = c.add_bean(91, 102)
         self.assertEqual(91, b.beginIndex)
@@ -58,11 +49,9 @@ class ContextTest(unittest.TestCase):
         self.assertEqual("http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0", b.context)
         
     def test_turtle(self):
-        c = NIFContext()
-        c.baseURI = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0'
-        c.beginIndex = 0
-        c.endIndex = len(self.example_text)
-        c.mention = self.example_text
+        c = NIFContext(
+            uri='http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_0_1411',
+            mention=self.example_text)
 
         self.assertTrue(turtle_equal(self.example_turtle, c.turtle))
         
