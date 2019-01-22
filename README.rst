@@ -1,5 +1,5 @@
-pynif `Build Status <https://travis-ci.org/wetneb/pynif>`__ `Coverage Status <https://coveralls.io/github/wetneb/pynif?branch=master>`__
-========================================================================================================================================
+pynif
+=====
 
 The `NLP Interchange Format
 (NIF) <http://persistence.uni-leipzig.org/nlp2rdf/>`__ is an
@@ -38,7 +38,7 @@ are encoded by RDF triples between these URIs. This library abstracts
 away the encoding by letting you manipulate collections, contexts and
 phrases as plain Python objects.
 
-Quick start
+Quickstart
 -----------
 
 0) Import and create a collection
@@ -46,7 +46,6 @@ Quick start
 .. code:: python
 
    from pynif import NIFCollection
-
 
    collection = NIFCollection(uri="http://freme-project.eu")
            
