@@ -21,26 +21,46 @@ The NLP Interchange Format (NIF) is an RDF/OWL-based format that aims to achieve
 
 ## Usage
 
-0) Import and instantiate
+0) Import and create a dataset
 
 ```
-import NIF21
+from pynif import NIFDataset
 
 
-nif21 = NIF21.NIF21()
-
+dataset = NIFDataset(uri="http://freme-project.eu")
+        
 ```
 
 1) Create a context
 
 ```
-nif21.context("http://freme-project.eu", 0, 33, "Diego Maradona is from Argentina.")
+context = dataset.add_context(
+    uri="http://freme-project.eu/doc32",
+    mention="Diego Maradona is from Argentina.")
 
 ```
 
 2) Create entries for the entities
 
 ```
+context.add_bean(
+    beginIndex=0,
+    endIndex=14,
+    taClassRef=['http://dbpedia.org/ontology/SportsManager', 'http://dbpedia.org/ontology/Person', 'http://nerd.eurecom.fr/ontology#Person'],
+    score=0.9869992701528016,
+    annotator='http://freme-project.eu/tools/freme-ner',
+    taIdentRef='http://dbpedia.org/resource/Diego_Maradona',
+    taMsClassRef='http://dbpedia.org/ontology/SoccerManager')
+
+context.add_bean(
+    beginIndex=23,
+    endIndex=32,
+    taClassRef=['http://dbpedia.org/ontology/PopulatedPlace', 'http://nerd.eurecom.fr/ontology#Location',
+    'http://dbpedia.org/ontology/Place'],
+    score=0.9804963628413852,
+    annotator='http://freme-project.eu/tools/freme-ner',
+    taMsClassRef='http://dbpedia.org/resource/Argentina')
+
 nif21.bean('Diego Maradona',
            0,
            14,
@@ -65,7 +85,8 @@ nif21.bean('Argentina',
 3) Finally, get the output with the format that you need
 
 ```
-print nif21.turtle()
+generated_nif = dataset.dumps(format='turtle')
+print(generated_nif)
 ```
 
 
