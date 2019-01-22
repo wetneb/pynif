@@ -8,27 +8,48 @@ class NIFContext(object):
     A context is a string which can be annotated by beans.
     """
 
-    def __init__(self):
-        self.baseURI = None
-        self.beginIndex = None
-        self.endIndex = None
-        self.mention = None
-        self.sourceUrl = None
+    def __init__(self,
+                 beginIndex=None,
+                 endIndex=None,
+                 mention=None,
+                 sourceUrl=None,
+                 uri=None):
+        self.original_uri = uri
+        self.beginIndex = beginIndex
+        self.endIndex = endIndex
+        self.mention = mention
+        if mention is not None and beginIndex is None:
+            self.beginIndex = 0
+        if mention is not None and endIndex is None:
+            self.endIndex = len(mention)
+        self.sourceUrl = sourceUrl
         self.beans = []
-        self.original_uri = None
-        self.original_collection_uri = None
 
-    def add_bean(self, beginIndex=None, endIndex=None):
+    def add_bean(self,
+            beginIndex=None,
+            endIndex=None,    
+            annotator = None,
+            score = None,
+            taIdentRef = None,
+            taClassRef = None,
+            taMsClassRef = None,
+            uri = None,
+            source = None):
         """
         Creates a new annotation in this document.
         
         :returns: the new {@class NIFBean}
         """
-        bean = NIFBean()
-        bean.context = self.baseURI
-        bean.referenceContext = self.uri
-        bean.beginIndex = beginIndex
-        bean.endIndex = endIndex
+        bean = NIFBean(context = self.original_uri,
+                beginIndex = beginIndex,
+                endIndex = endIndex,
+                annotator = annotator,
+                score = score,
+                taIdentRef = taIdentRef,
+                taClassRef = taClassRef,
+                taMsClassRef = taMsClassRef,
+                uri = uri,
+                source = source)
         if beginIndex is not None and endIndex is not None:
             bean.mention = self.mention[beginIndex:endIndex]
         self.beans.append(bean)
@@ -57,12 +78,7 @@ class NIFContext(object):
         yield (self.uri, NIF.isString, Literal(self.mention))
         if self.sourceUrl is not None:
             yield (self.uri, NIF.sourceUrl, URIRef(self.sourceUrl))
-        
-        yield (self.collection_uri, RDF.type, NIF.ContextCollection)
-        yield (self.collection_uri, NIF.hasContext, self.uri)
-        yield (self.collection_uri, DCTERMS.conformsTo, URIRef(nif_ontology_uri))
-        
-                     
+               
         for bean in self.beans:
             for triple in bean.triples():
                 yield triple
@@ -85,10 +101,6 @@ class NIFContext(object):
                 context.endIndex = o.toPython()
             elif p == NIF.sourceUrl:
                 context.sourceUrl = o.toPython()
- 
-        # Load collection
-        for s,p,o in graph.triples((None, NIF.hasContext, uri)):
-            context.original_collection_uri = s.toPython()
             
         # Load child beans
         for s,p,o in graph.triples((None, NIF.referenceContext, uri)):

@@ -8,19 +8,29 @@ class NIFBean(object):
     Represents an annotation in a document.
     """
     
-    def __init__(self):
-        self.context = None
-        self.annotator = None
-        self.mention = None
-        self.beginIndex = None
-        self.endIndex = None
-        self.score = None
-        self.taIdentRef = None
-        self.taClassRef = None
-        self.referenceContext = None
-        self.taMsClassRef = None
-        self.original_uri = None
-        self.source = None
+    def __init__(self,
+            context = None,
+            annotator = None,
+            mention = None,
+            beginIndex = None,
+            endIndex = None,
+            score = None,
+            taIdentRef = None,
+            taClassRef = None,
+            taMsClassRef = None,
+            uri = None,
+            source = None):
+        self.context = context
+        self.annotator = annotator
+        self.mention = mention
+        self.beginIndex = beginIndex
+        self.endIndex = endIndex
+        self.score = score
+        self.taIdentRef = taIdentRef
+        self.taClassRef = taClassRef
+        self.taMsClassRef = taMsClassRef
+        self.original_uri = uri
+        self.source = source
         
     @property
     def uri(self):
@@ -50,8 +60,8 @@ class NIFBean(object):
             yield (self.uri, NIF.taMsClassRef, URIRef(self.taMsClassRef))
         for currentClassRef in self.taClassRef or []:
             yield (self.uri, ITSRDF.taClassRef, URIRef(currentClassRef))
-        if self.referenceContext is not None:
-            yield (self.uri, NIF.referenceContext, URIRef(self.referenceContext))
+        if self.context is not None:
+            yield (self.uri, NIF.referenceContext, URIRef(self.context))
         if self.taMsClassRef is not None:
             yield (self.uri, NIF.taMsClassRef, URIRef(self.taMsClassRef))
         if self.source is not None:
@@ -73,7 +83,7 @@ class NIFBean(object):
             elif p == NIF.endIndex:
                 bean.endIndex = o.toPython()
             elif p == NIF.referenceContext:
-                bean.referenceContext = o.toPython()
+                bean.context = o.toPython()
             elif p == ITSRDF.taAnnotatorsRef:
                 bean.annotator = o.toPython()
             elif p == ITSRDF.taConfidence:
