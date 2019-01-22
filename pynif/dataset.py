@@ -90,3 +90,12 @@ class NIFDataset(object):
         
         graph.namespace_manager = NIFPrefixes().manager
         return graph.serialize(format=format)
+    
+    def __str__(self):
+        return self.__repr__()
+    
+    def __repr__(self):
+        return '<NIFDataset {}>'.format(self.uri)
+    
+    def __eq__(self, other):
+         return (self.uri == other.uri and set(self.contexts) == set(other.contexts))

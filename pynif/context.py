@@ -82,7 +82,7 @@ class NIFContext(object):
         that graph, load the corresponding context and its child beans.
         """
         context = cls()
-        context.original_uri = uri
+        context.original_uri = uri.toPython()
         # Load core data
         for s,p,o in graph.triples((uri, None, None)):
             if p == NIF.isString:
@@ -122,5 +122,19 @@ class NIFContext(object):
                 mention = mention[:50]+'...'
             return '<NIFContext {}-{}: {}>'.format(self.beginIndex, self.endIndex, repr(mention))
         else:
-            return '<NIFContext (undefined)>'           
+            return '<NIFContext (undefined)>'
+        
+    def _tuple(self):
+        return (self.uri,
+            self.beginIndex,
+            self.endIndex,
+            self.mention,
+            self.sourceUrl,
+            set(self.beans))
+    
+    def __eq__(self, other):
+        return self._tuple() == other._tuple()
+    
+    def __hash__(self):
+        return hash(self.uri)
     

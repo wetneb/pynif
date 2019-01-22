@@ -69,6 +69,15 @@ generated_nif = dataset.dumps(format='turtle')
 print(generated_nif)
 ```
 
+You can then parse it back:
+
+```
+parsed_dataset = NIFDataset.loads(generated_nif)
+
+for context in parsed_dataset.contexts:
+   for bean in context.beans:
+       print(bean)
+```
 
 ## Issues
 

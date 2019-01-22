@@ -122,3 +122,22 @@ class NIFBean(object):
             return '<Bean {}-{}: {}>'.format(self.beginIndex, self.endIndex, repr(mention))
         else:
             return '<Bean (undefined)>'
+        
+    def _tuple(self):
+        return (self.context,
+        self.annotator,
+        self.mention,
+        self.beginIndex,
+        self.endIndex,
+        self.score,
+        self.taIdentRef,
+        self.taClassRef,
+        self.taMsClassRef,
+        self.original_uri,
+        self.source)
+        
+    def __eq__(self, other):
+        return self._tuple() == other._tuple()
+    
+    def __hash__(self):
+        return hash(self.uri)

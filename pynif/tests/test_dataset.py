@@ -65,8 +65,13 @@ class DatasetTests(unittest.TestCase):
            taMsClassRef='http://dbpedia.org/resource/Argentina')
 
         generated_nif = dataset.dumps(format='turtle')
-        with open('/tmp/a', 'w') as f:
-            f.write(generated_nif.decode('utf-8'))
         self.assertTrue(turtle_equal(self.example_maradona, generated_nif))
+        
+        parsed_dataset = NIFDataset.loads(generated_nif)
+        parsed_context = parsed_dataset.contexts[0]
+        
+        self.assertEqual(1, len(parsed_dataset.contexts))
+        self.assertEqual(context._tuple(), parsed_context._tuple())
+        self.assertEqual(dataset, parsed_dataset)
         
         
