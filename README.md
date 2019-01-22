@@ -30,7 +30,6 @@ This library abstracts away the encoding by letting you manipulate collections, 
 from pynif import NIFCollection
 
 collection = NIFCollection(uri="http://freme-project.eu")
-        
 ```
 
 1) Create a context
