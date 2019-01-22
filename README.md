@@ -15,9 +15,9 @@ The NLP Interchange Format (NIF) is an RDF/OWL-based format that aims to achieve
 
  * 2.1
 
-## Supported formats
+## Supported RDF formats
 
-* Turtle
+* [All the formats supported by rdflib](https://rdflib.readthedocs.io/en/stable/plugin_parsers.html)
 
 ## Usage
 
@@ -60,26 +60,6 @@ context.add_bean(
     score=0.9804963628413852,
     annotator='http://freme-project.eu/tools/freme-ner',
     taMsClassRef='http://dbpedia.org/resource/Argentina')
-
-nif21.bean('Diego Maradona',
-           0,
-           14,
-           ['http://dbpedia.org/ontology/SportsManager', 'http://dbpedia.org/ontology/Person', 'http://nerd.eurecom.fr/ontology#Person'],
-           0.9869992701528016,
-           'http://freme-project.eu/tools/freme-ner',
-           'http://dbpedia.org/resource/Diego_Maradona',
-           'http://dbpedia.org/ontology/SoccerManager')
-
-
-nif21.bean('Argentina',
-           23,
-           32,
-           ['http://dbpedia.org/ontology/PopulatedPlace', 'http://nerd.eurecom.fr/ontology#Location',
-            'http://dbpedia.org/ontology/Place'],
-           0.9804963628413852,
-           'http://freme-project.eu/tools/freme-ner',
-           'http://dbpedia.org/resource/Argentina',
-           None)
 ```
 
 3) Finally, get the output with the format that you need
