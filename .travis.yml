@@ -5,8 +5,9 @@ python:
   - "3.5"
   - "3.6"
 install:
-  - pip install -r requirements.txt
-# command to run tests
+  - pip install pytest-cov coveralls -r requirements.txt
 script:
-  - pytest
+  - pytest --cov=pynif
 
+after_success:
+  - coveralls

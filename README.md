@@ -1,4 +1,4 @@
-# pynif [![Build Status](https://travis-ci.org/wetneb/pynif.svg?branch=master)](https://travis-ci.org/wetneb/pynif)
+# pynif [![Build Status](https://travis-ci.org/wetneb/pynif.svg?branch=master)](https://travis-ci.org/wetneb/pynif) [![Coverage Status](https://coveralls.io/repos/github/wetneb/pynif/badge.svg?branch=master)](https://coveralls.io/github/wetneb/pynif?branch=master)
 
 The [NLP Interchange Format (NIF)](http://persistence.uni-leipzig.org/nlp2rdf/) is an RDF/OWL-based format that aims to achieve interoperability between Natural Language Processing (NLP) tools, language resources and annotations. It offers a standard representation of annotated texts for tasks such as [Named Entity Recognition](https://en.wikipedia.org/wiki/Named-entity_recognition) or [Entity Linking](https://en.wikipedia.org/wiki/Entity_linking). It is used by [GERBIL](https://github.com/dice-group/gerbil) to run reproducible evaluations of annotators.
 
