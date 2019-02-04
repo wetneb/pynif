@@ -127,9 +127,11 @@ If you have any problems with or questions about this library, please contact us
 
 ## Releasing a new version
 
-Update the version in `setup.py`, create and upload a git tag, and then:
+Make sure the version in `setup.py` is up to date, create and upload a git tag, and then:
 
 ```
 python setup.py sdist bdist_wheel
 python -m twine upload dist/*
 ```
+
+Increment hte version in `setup.py`.
