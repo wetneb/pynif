@@ -125,3 +125,11 @@ for context in parsed_collection.contexts:
 
 If you have any problems with or questions about this library, please contact us through a [GitHub issue](https://github.com/wetneb/pynif/issues).
 
+## Releasing a new version
+
+Update the version in `setup.py`, create and upload a git tag, and then:
+
+```
+python setup.py sdist bdist_wheel
+python -m twine upload dist/*
+```
