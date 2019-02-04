@@ -70,7 +70,7 @@ class NIFCollectionTest(unittest.TestCase):
            annotator='http://freme-project.eu/tools/freme-ner',
            taMsClassRef='http://dbpedia.org/resource/Argentina')
 
-        generated_nif = collection.dumps(format='turtle').decode('utf-8')
+        generated_nif = collection.dumps(format='turtle')
         self.assertTrue(turtle_equal(self.example_maradona, generated_nif))
 
         parsed_collection = NIFCollection.loads(generated_nif)

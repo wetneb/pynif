@@ -1,6 +1,7 @@
 from .context import NIFContext
 from rdflib import Graph, URIRef
 from .prefixes import RDF, NIF, DCTERMS, NIFPrefixes, nif_ontology_uri
+from six import binary_type
 
 class NIFCollection(object):
     """
@@ -101,7 +102,13 @@ class NIFCollection(object):
             graph.add(triple)
 
         graph.namespace_manager = NIFPrefixes().manager
-        return graph.serialize(format=format)
+        out = graph.serialize(format=format)
+
+        # workaround for https://github.com/RDFLib/rdflib/issues/884
+        if isinstance(out, binary_type):
+            out = out.decode('utf-8')
+
+        return out
 
     def dump(self, filename, format='turtle'):
         """
