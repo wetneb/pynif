@@ -131,7 +131,7 @@ class NIFPhrase(object):
         self.endIndex,
         self.score,
         self.taIdentRef,
-        set(self.taClassRef),
+        set(self.taClassRef) if self.taClassRef else set(),
         self.taMsClassRef,
         self.uri,
         self.source)
