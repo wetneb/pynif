@@ -26,5 +26,6 @@ jobs:
         python -m pip install --upgrade pip pytest coveralls
         pip install -r requirements.txt
     - name: Run tests
+      env: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         coverage run --source=pynif --omit="*/tests/*" -m py.test && coveralls
