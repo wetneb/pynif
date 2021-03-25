@@ -23,9 +23,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        python -m pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        python -m pip install --upgrade pip coveralls
+        pip install -r requirements.txt
     - name: Run tests
       run: |
-        pythom -m unittest multiprocessing_generator.tests
+        coverage run --source=pynif --omit="*/tests/*" -m py.test && coveralls
