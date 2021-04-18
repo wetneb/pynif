@@ -23,12 +23,12 @@ class NIFPhrase(object):
             source = None):
         """
         A phrase can be represented by an OffsetBasedString URI or a
-        ContextHashBasedString URI. OffsetBasedString is much popular 
-        in NLP challanges and easier to use. 
+        ContextHashBasedString URI.
 
-        :pram: hash_uri has been added to facilitate the representation 
-        and serialization of ContextHashBasedString folliwing the 
-        NIF documentation. ContextHashBasedString is discussed in 
+        :pram: is_hash_based_uri set to True indicates that the :param: uri 
+        is a ContextHashBasedString, otherwsie is considered as OffsetBasedString.
+
+        ContextHashBasedString is discussed in 
         the paper Linked-Data Aware URI Schemes for Referencing Text Fragments 
         (https://doi.org/10.1007/978-3-642-33876-2_17) page 4. 
         The ContextHashBasedString URI must be provided by the users, it is not
