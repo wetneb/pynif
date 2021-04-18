@@ -19,7 +19,7 @@ class NIFPhrase(object):
             taClassRef = None,
             taMsClassRef = None,
             uri = None,
-            hash_uri = None,
+            is_hash_based_uri = False,
             source = None):
         """
         A phrase can be represented by an OffsetBasedString URI or a
@@ -43,8 +43,8 @@ class NIFPhrase(object):
         self.taIdentRef = taIdentRef
         self.taClassRef = taClassRef
         self.taMsClassRef = taMsClassRef
-        self.isContextHashBasedString = True if hash_uri else False
-        self.original_uri = hash_uri if self.isContextHashBasedString else uri
+        self.isContextHashBasedString = is_hash_based_uri
+        self.original_uri = uri
         self.source = source
         
     @property

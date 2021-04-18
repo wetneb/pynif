@@ -14,7 +14,7 @@ class NIFContext(object):
                  mention=None,
                  sourceUrl=None,
                  uri=None,
-                 hash_uri = None):
+                 is_hash_based_uri = False):
         """
         A context can be represented by an OffsetBasedString URI or a
         ContextHashBasedString URI. OffsetBasedString is much popular 
@@ -28,8 +28,8 @@ class NIFContext(object):
         The ContextHashBasedString URI must be provided by the users, it is not
         created automatically.
         """
-        self.isContextHashBasedString = True if hash_uri else False
-        self.original_uri = hash_uri if self.isContextHashBasedString else uri
+        self.isContextHashBasedString = is_hash_based_uri
+        self.original_uri = uri
         self.beginIndex = beginIndex
         self.endIndex = endIndex
         self.mention = mention
@@ -50,7 +50,7 @@ class NIFContext(object):
             taMsClassRef = None,
             uri = None,
             source = None,
-            hash_uri = None):
+            is_hash_based_uri = False):
         """
         Creates a new annotation in this document.
         
@@ -66,7 +66,7 @@ class NIFContext(object):
                 taMsClassRef = taMsClassRef,
                 uri = uri,
                 source = source,
-                hash_uri= hash_uri)
+                is_hash_based_uri= is_hash_based_uri)
         if beginIndex is not None and endIndex is not None:
             phrase.mention = self.mention[beginIndex:endIndex]
         self.phrases.append(phrase)

@@ -66,8 +66,9 @@ class NIFContextTest(unittest.TestCase):
     
     def test_create_ContextHashBasedString_context(self):
         c = NIFContext(
-            hash_uri='http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati',
-            mention=self.example_text)
+            uri='http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati',
+            mention=self.example_text,
+            is_hash_based_uri=True)
         self.example_turtle_ContextHashBasedString = """
             @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
             @prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
@@ -83,10 +84,12 @@ class NIFContextTest(unittest.TestCase):
 
     def test_create_populated_ContextHashBasedString(self):
         context = NIFContext(
-                hash_uri='http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr',
-                mention="Diego Maradona is from Argentina.")
+                uri='http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr',
+                mention="Diego Maradona is from Argentina.",
+                is_hash_based_uri = True)
         context.add_phrase(
-                hash_uri='http://freme-project.eu#hash_19_33_158118325b076b079d3969108872d855_Diego%20Maradona%20is%20fr',
+                uri='http://freme-project.eu#hash_19_33_158118325b076b079d3969108872d855_Diego%20Maradona%20is%20fr',
+                is_hash_based_uri = True,
                 beginIndex=0,
                 endIndex=14,
                 score=0.9869992701528016,

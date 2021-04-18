@@ -64,7 +64,8 @@ class NIFPhraseTest(unittest.TestCase):
 
     def test_create_ContextHashBasedString_phrase(self):
         p = NIFPhrase(
-            hash_uri='http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_1400_1411_9f215ab78483a223463f9726ee0e92c0_%20%20%20%20Primary%20Navigati',
+            uri='http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_1400_1411_9f215ab78483a223463f9726ee0e92c0_%20%20%20%20Primary%20Navigati',
+            is_hash_based_uri = True,
             context = "http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati",
             beginIndex=91,
             endIndex=102,
