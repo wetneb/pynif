@@ -81,5 +81,46 @@ class NIFContextTest(unittest.TestCase):
         """.format(len(self.example_text), self.example_text.replace('"', '\\"'))
         self.assertTrue(turtle_equal(self.example_turtle_ContextHashBasedString, c.turtle))
 
+    def test_create_populated_ContextHashBasedString(self):
+        context = NIFContext(
+                hash_uri='http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr',
+                mention="Diego Maradona is from Argentina.")
+        context.add_phrase(
+                hash_uri='http://freme-project.eu#hash_19_33_158118325b076b079d3969108872d855_Diego%20Maradona%20is%20fr',
+                beginIndex=0,
+                endIndex=14,
+                score=0.9869992701528016,
+                taClassRef=['http://dbpedia.org/ontology/SportsManager', 'http://dbpedia.org/ontology/Person', 'http://nerd.eurecom.fr/ontology#Person'],
+                annotator='http://freme-project.eu/tools/freme-ner',
+                taIdentRef='http://dbpedia.org/resource/Diego_Maradona',
+                taMsClassRef='http://dbpedia.org/ontology/SoccerManager')
+        self.example_turtle_ContextHashBasedString = """
+            @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+            @prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+            @prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+                
+            <http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr>
+                a nif:ContextHashBasedString , nif:Context ;
+                nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
+                nif:endIndex    "33"^^xsd:nonNegativeInteger ;
+                nif:isString    "Diego Maradona is from Argentina." .
+
+            <http://freme-project.eu#hash_19_33_158118325b076b079d3969108872d855_Diego%20Maradona%20is%20fr>
+                a nif:ContextHashBasedString, nif:Phrase ;
+                nif:anchorOf "Diego Maradona" ;
+                nif:beginIndex "0"^^xsd:nonNegativeInteger ;
+                nif:endIndex "14"^^xsd:nonNegativeInteger ;
+                nif:referenceContext <http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr> ;
+                nif:taMsClassRef <http://dbpedia.org/ontology/SoccerManager> ;
+                itsrdf:taAnnotatorsRef <http://freme-project.eu/tools/freme-ner> ;
+                itsrdf:taClassRef <http://dbpedia.org/ontology/Person>, <http://dbpedia.org/ontology/SportsManager>, <http://nerd.eurecom.fr/ontology#Person> ;
+                itsrdf:taConfidence 9.869993e-01 ;
+                itsrdf:taIdentRef <http://dbpedia.org/resource/Diego_Maradona> .
+        """
+        self.assertTrue(turtle_equal(self.example_turtle_ContextHashBasedString, context.turtle))
+
+
+
+
 if __name__ == '__main__':
     unittest.main()
