@@ -129,16 +129,18 @@ A context can be represented by an OffsetBasedString URI or a ContextHashBasedSt
 
 The ContextHashBasedString URI format is discussed in the paper Linked-Data Aware URI Schemes for Referencing Text Fragments (https://doi.org/10.1007/978-3-642-33876-2_17) page 4. 
 
-To use ContextHashBasedString URI, you always need to provide them when creating Collections, Context and Phrases.
-To provided a ContextHashBasedString must use the ``:param: hash_uri`` instead of ``uri``. See the following examples:
+To use ContextHashBasedString URIs, you always need to provide them when creating Contexts and Phrases.
+To provide a ContextHashBasedString URI instead of a OffsetBasedString URI, you must set the ``:param: is_hash_based_uri`` to ``True`` (by default ``is_hash_based_uri`` is ``False`` and the pynif works with ``nif:OffsetBasedString``). See the following examples:
 
 ```py
 context = NIFContext(
-    hash_uri='http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr',
+    uri='http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr',
+    is_hash_based_uri = True,
     mention="Diego Maradona is from Argentina.")
 
 context.add_phrase(
-    hash_uri='http://freme-project.eu#hash_19_33_158118325b076b079d3969108872d855_Diego%20Maradona%20is%20fr',
+    uri='http://freme-project.eu#hash_19_33_158118325b076b079d3969108872d855_Diego%20Maradona%20is%20fr',
+    is_hash_based_uri = True,
     beginIndex=0,
     endIndex=14,
     score=0.9869992701528016,
