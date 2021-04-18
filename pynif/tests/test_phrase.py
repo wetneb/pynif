@@ -85,7 +85,6 @@ class NIFPhraseTest(unittest.TestCase):
             itsrdf:taConfidence     "1"^^xsd:double ;
             itsrdf:taIdentRef       <http://dbpedia.org/resource/Afghanistan> .
         """
-        print(p.turtle)
         self.assertTrue(turtle_equal(self.example_turtle_ContextHashBasedString, p.turtle))
 
 if __name__ == '__main__':
