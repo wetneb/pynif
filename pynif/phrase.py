@@ -19,7 +19,21 @@ class NIFPhrase(object):
             taClassRef = None,
             taMsClassRef = None,
             uri = None,
+            hash_uri = None,
             source = None):
+        """
+        A phrase can be represented by an OffsetBasedString URI or a
+        ContextHashBasedString URI. OffsetBasedString is much popular 
+        in NLP challanges and easier to use. 
+
+        :pram: hash_uri has been added to facilitate the representation 
+        and serialization of ContextHashBasedString folliwing the 
+        NIF documentation. ContextHashBasedString is discussed in 
+        the paper Linked-Data Aware URI Schemes for Referencing Text Fragments 
+        (https://doi.org/10.1007/978-3-642-33876-2_17) page 4. 
+        The ContextHashBasedString URI must be provided by the users, it is not
+        created automatically.
+        """
         self.context = context
         self.annotator = annotator
         self.mention = mention
@@ -29,7 +43,8 @@ class NIFPhrase(object):
         self.taIdentRef = taIdentRef
         self.taClassRef = taClassRef
         self.taMsClassRef = taMsClassRef
-        self.original_uri = uri
+        self.isContextHashBasedString = True if hash_uri else False
+        self.original_uri = hash_uri if self.isContextHashBasedString else uri
         self.source = source
         
     @property
@@ -44,7 +59,10 @@ class NIFPhrase(object):
         """
         Returns the representation of the phrase as RDF triples
         """
-        yield (self.uri, RDF.type, NIF.OffsetBasedString)
+        if self.isContextHashBasedString:
+            yield (self.uri, RDF.type, NIF.ContextHashBasedString)
+        else:
+            yield (self.uri, RDF.type, NIF.OffsetBasedString)
         yield (self.uri, RDF.type, NIF.Phrase)
         yield (self.uri, NIF.anchorOf, Literal(self.mention))
         yield (self.uri, NIF.beginIndex, Literal(self.beginIndex, datatype=XSD.nonNegativeInteger))

@@ -80,3 +80,5 @@ class NIFCollectionTest(unittest.TestCase):
         self.assertEqual(collection, parsed_collection)
 
 
+if __name__ == '__main__':
+    unittest.main()

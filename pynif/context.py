@@ -13,8 +13,23 @@ class NIFContext(object):
                  endIndex=None,
                  mention=None,
                  sourceUrl=None,
-                 uri=None):
-        self.original_uri = uri
+                 uri=None,
+                 hash_uri = None):
+        """
+        A context can be represented by an OffsetBasedString URI or a
+        ContextHashBasedString URI. OffsetBasedString is much popular 
+        in NLP challanges and easier to use. 
+
+        :pram: hash_uri has been added to facilitate the representation 
+        and serialization of ContextHashBasedString folliwing the 
+        NIF documentation. ContextHashBasedString is discussed in 
+        the paper Linked-Data Aware URI Schemes for Referencing Text Fragments 
+        (https://doi.org/10.1007/978-3-642-33876-2_17) page 4. 
+        The ContextHashBasedString URI must be provided by the users, it is not
+        created automatically.
+        """
+        self.isContextHashBasedString = True if hash_uri else False
+        self.original_uri = hash_uri if self.isContextHashBasedString else uri
         self.beginIndex = beginIndex
         self.endIndex = endIndex
         self.mention = mention
@@ -34,7 +49,8 @@ class NIFContext(object):
             taClassRef = None,
             taMsClassRef = None,
             uri = None,
-            source = None):
+            source = None,
+            hash_uri = None):
         """
         Creates a new annotation in this document.
         
@@ -49,7 +65,8 @@ class NIFContext(object):
                 taClassRef = taClassRef,
                 taMsClassRef = taMsClassRef,
                 uri = uri,
-                source = source)
+                source = source,
+                hash_uri= hash_uri)
         if beginIndex is not None and endIndex is not None:
             phrase.mention = self.mention[beginIndex:endIndex]
         self.phrases.append(phrase)
@@ -63,7 +80,10 @@ class NIFContext(object):
         """
         Returns the representation of the context as RDF triples
         """
-        yield (self.uri, RDF.type, NIF.OffsetBasedString)
+        if self.isContextHashBasedString:
+            yield (self.uri, RDF.type, NIF.ContextHashBasedString)
+        else:
+            yield (self.uri, RDF.type, NIF.OffsetBasedString)
         yield (self.uri, RDF.type, NIF.Context)
         yield (self.uri, NIF.beginIndex, Literal(self.beginIndex, datatype=XSD.nonNegativeInteger))
         yield (self.uri, NIF.endIndex, Literal(self.endIndex, datatype=XSD.nonNegativeInteger))

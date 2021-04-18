@@ -63,3 +63,23 @@ class NIFContextTest(unittest.TestCase):
         self.assertEqual(self.example_text, context.mention)
         self.assertEqual(0, context.beginIndex)
         self.assertEqual(len(self.example_text), context.endIndex)
+    
+    def test_create_ContextHashBasedString_context(self):
+        c = NIFContext(
+            hash_uri='http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati',
+            mention=self.example_text)
+        self.example_turtle_ContextHashBasedString = """
+            @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+            @prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+            @prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+                    
+            <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati>
+                a                       nif:ContextHashBasedString , nif:Context ;
+                nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
+                nif:endIndex    "{}"^^xsd:nonNegativeInteger ;
+                nif:isString    "{}" .
+        """.format(len(self.example_text), self.example_text.replace('"', '\\"'))
+        self.assertTrue(turtle_equal(self.example_turtle_ContextHashBasedString, c.turtle))
+
+if __name__ == '__main__':
+    unittest.main()
