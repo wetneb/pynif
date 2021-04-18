@@ -123,11 +123,9 @@ for context in parsed_collection.contexts:
 
 ## Supported NIF OffsetBasedString
 
-A context can be represented by an OffsetBasedString URI or a ContextHashBasedString URI. Although, OffsetBasedString is much popular in NLP challanges and easier to use. 
+A context can be represented by an OffsetBasedString URI or a ContextHashBasedString URI. The ContextHashBasedString URI format is discussed in the paper Linked-Data Aware URI Schemes for Referencing Text Fragments (https://doi.org/10.1007/978-3-642-33876-2_17) page 4. 
 
-**The URI formated as ContextHashBasedString must be manually provided. The current pynif does not create them for you**
-
-The ContextHashBasedString URI format is discussed in the paper Linked-Data Aware URI Schemes for Referencing Text Fragments (https://doi.org/10.1007/978-3-642-33876-2_17) page 4. 
+**URIs formatted as ContextHashBasedString must be manually provided. The current pynif does not create them for you**
 
 To use ContextHashBasedString URIs, you always need to provide them when creating Contexts and Phrases.
 To provide a ContextHashBasedString URI instead of a OffsetBasedString URI, you must set the ``:param: is_hash_based_uri`` to ``True`` (by default ``is_hash_based_uri`` is ``False`` and the pynif works with ``nif:OffsetBasedString``). See the following examples:
@@ -152,7 +150,7 @@ context.add_phrase(
     taMsClassRef='http://dbpedia.org/ontology/SoccerManager')
 ```
 
-The output with TURTLE format:
+The output in TURTLE format:
 
 ```python
 generated_nif = context.dumps(format='turtle')
