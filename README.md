@@ -142,7 +142,9 @@ context.add_phrase(
     beginIndex=0,
     endIndex=14,
     score=0.9869992701528016,
-    taClassRef=['http://dbpedia.org/ontology/SportsManager', 'http://dbpedia.org/ontology/Person', 'http://nerd.eurecom.fr/ontology#Person'],
+    taClassRef=['http://dbpedia.org/ontology/SportsManager', 
+        'http://dbpedia.org/ontology/Person', 
+        'http://nerd.eurecom.fr/ontology#Person'],
     annotator='http://freme-project.eu/tools/freme-ner',
     taIdentRef='http://dbpedia.org/resource/Diego_Maradona',
     taMsClassRef='http://dbpedia.org/ontology/SoccerManager')
@@ -173,7 +175,9 @@ print(generated_nif)
     nif:referenceContext <http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr> ;
     nif:taMsClassRef <http://dbpedia.org/ontology/SoccerManager> ;
     itsrdf:taAnnotatorsRef <http://freme-project.eu/tools/freme-ner> ;
-    itsrdf:taClassRef <http://dbpedia.org/ontology/Person>, <http://dbpedia.org/ontology/SportsManager>, <http://nerd.eurecom.fr/ontology#Person> ;
+    itsrdf:taClassRef <http://dbpedia.org/ontology/Person>, 
+        <http://dbpedia.org/ontology/SportsManager>, 
+        <http://nerd.eurecom.fr/ontology#Person> ;
     itsrdf:taConfidence 9.869993e-01 ;
     itsrdf:taIdentRef <http://dbpedia.org/resource/Diego_Maradona> .
 ```
