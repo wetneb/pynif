@@ -33,13 +33,8 @@ class NIFContextTest(unittest.TestCase):
                 nif:endIndex    "{}"^^xsd:nonNegativeInteger ;
                 nif:isString    "{}" .
         """.format(len(cls.example_text), cls.example_text.replace('"', '\\"'))
-        # The following string is copied from the file tests/data/example-ContextHashBasedString.ttl
-        # The load from file would not pass GitHub Checks sinse the file example-ContextHashBasedString.ttl 
-        # it is not in the main repo. Once the PR is completed the  line 
-        # cls.example_ContextHashBasedString = """....""" can be replaced by the following code:
-        #
         testdir = os.path.dirname(os.path.abspath(__file__))
-        with open(os.path.join(testdir, 'data/example-ContextHashBasedString.ttl'), 'r') as f:
+        with open(os.path.join(testdir, 'data/example-contextHashBasedString.ttl'), 'r') as f:
            cls.example_ContextHashBasedString = f.read()
         """
         cls.example_ContextHashBasedString = "@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
