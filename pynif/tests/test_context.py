@@ -1,10 +1,13 @@
 
+import os
+
 import unittest
 from pynif.context import NIFContext
 from .util import turtle_equal
 from rdflib import Graph, URIRef
 
 class NIFContextTest(unittest.TestCase):
+    maxDiff = None
     
     @classmethod
     def setUpClass(cls):
@@ -20,7 +23,22 @@ class NIFContextTest(unittest.TestCase):
                 nif:endIndex    "{}"^^xsd:nonNegativeInteger ;
                 nif:isString    "{}" .
         """.format(len(cls.example_text), cls.example_text.replace('"', '\\"'))
-    
+        cls.example_turtle_ContextHashBasedString = """
+            @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+            @prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+            @prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+                    
+            <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati>
+                a                       nif:ContextHashBasedString , nif:Context ;
+                nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
+                nif:endIndex    "{}"^^xsd:nonNegativeInteger ;
+                nif:isString    "{}" .
+        """.format(len(cls.example_text), cls.example_text.replace('"', '\\"'))
+        testdir = os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(testdir, 'data/example-ContextHashBasedString.ttl'), 'r') as f:
+            cls.example_ContextHashBasedString = f.read()
+        cls.testdir = testdir
+
     def test_to_string_undefined(self):
         c = NIFContext()
         self.assertEqual("<NIFContext (undefined)>", str(c))
@@ -69,17 +87,6 @@ class NIFContextTest(unittest.TestCase):
             uri='http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati',
             mention=self.example_text,
             is_hash_based_uri=True)
-        self.example_turtle_ContextHashBasedString = """
-            @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
-            @prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
-            @prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
-                    
-            <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati>
-                a                       nif:ContextHashBasedString , nif:Context ;
-                nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
-                nif:endIndex    "{}"^^xsd:nonNegativeInteger ;
-                nif:isString    "{}" .
-        """.format(len(self.example_text), self.example_text.replace('"', '\\"'))
         self.assertTrue(turtle_equal(self.example_turtle_ContextHashBasedString, c.turtle))
 
     def test_create_populated_ContextHashBasedString(self):
@@ -97,30 +104,37 @@ class NIFContextTest(unittest.TestCase):
                 annotator='http://freme-project.eu/tools/freme-ner',
                 taIdentRef='http://dbpedia.org/resource/Diego_Maradona',
                 taMsClassRef='http://dbpedia.org/ontology/SoccerManager')
-        self.example_turtle_ContextHashBasedString = """
-            @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
-            @prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
-            @prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
-                
-            <http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr>
-                a nif:ContextHashBasedString , nif:Context ;
-                nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
-                nif:endIndex    "33"^^xsd:nonNegativeInteger ;
-                nif:isString    "Diego Maradona is from Argentina." .
+        self.assertTrue(turtle_equal(context.turtle, self.example_ContextHashBasedString,))
 
-            <http://freme-project.eu#hash_19_33_158118325b076b079d3969108872d855_Diego%20Maradona%20is%20fr>
-                a nif:ContextHashBasedString, nif:Phrase ;
-                nif:anchorOf "Diego Maradona" ;
-                nif:beginIndex "0"^^xsd:nonNegativeInteger ;
-                nif:endIndex "14"^^xsd:nonNegativeInteger ;
-                nif:referenceContext <http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr> ;
-                nif:taMsClassRef <http://dbpedia.org/ontology/SoccerManager> ;
-                itsrdf:taAnnotatorsRef <http://freme-project.eu/tools/freme-ner> ;
-                itsrdf:taClassRef <http://dbpedia.org/ontology/Person>, <http://dbpedia.org/ontology/SportsManager>, <http://nerd.eurecom.fr/ontology#Person> ;
-                itsrdf:taConfidence 9.869993e-01 ;
-                itsrdf:taIdentRef <http://dbpedia.org/resource/Diego_Maradona> .
-        """
-        self.assertTrue(turtle_equal(self.example_turtle_ContextHashBasedString, context.turtle))
+    def test_load_from_graph_ContextHashBasedString(self):
+        context = NIFContext(
+                uri='http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr',
+                mention="Diego Maradona is from Argentina.",
+                is_hash_based_uri = True)
+        context.add_phrase(
+                uri='http://freme-project.eu#hash_19_33_158118325b076b079d3969108872d855_Diego%20Maradona%20is%20fr',
+                is_hash_based_uri = True,
+                beginIndex=0,
+                endIndex=14,
+                score=0.9869992701528016,
+                taClassRef=['http://dbpedia.org/ontology/SportsManager', 'http://dbpedia.org/ontology/Person', 'http://nerd.eurecom.fr/ontology#Person'],
+                annotator='http://freme-project.eu/tools/freme-ner',
+                taIdentRef='http://dbpedia.org/resource/Diego_Maradona',
+                taMsClassRef='http://dbpedia.org/ontology/SoccerManager')
+        g = Graph().parse(format='turtle',data=self.example_ContextHashBasedString)
+        uri = URIRef('http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr')
+        parsed_context = NIFContext.load_from_graph(g, uri)
+        self.assertEqual(context.turtle, parsed_context.turtle)
+        self.assertEqual(context.turtle, self.example_ContextHashBasedString)
+    
+    def test_load_ContextHashBasedString(self):
+        g = Graph().parse(format='turtle',data=self.example_ContextHashBasedString)
+        uri = URIRef('http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr')
+        parsed_context = NIFContext.load_from_graph(g, uri)
+        self.assertTrue(parsed_context.isContextHashBasedString)
+        for phrase in parsed_context.phrases:
+            self.assertTrue(phrase.isContextHashBasedString)
+        self.assertEqual(parsed_context.turtle, self.example_ContextHashBasedString)
 
 
 

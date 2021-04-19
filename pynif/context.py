@@ -3,6 +3,9 @@ from .phrase import NIFPhrase
 from .prefixes import NIF, XSD, ITSRDF, RDF, DCTERMS, nif_ontology_uri
 from .prefixes import NIFPrefixes
 
+from six import binary_type
+
+
 class NIFContext(object):
     """
     A context is a string which can be annotated by phrases.
@@ -113,6 +116,8 @@ class NIFContext(object):
                 context.endIndex = o.toPython()
             elif p == NIF.sourceUrl:
                 context.sourceUrl = o.toPython()
+            if o == NIF.ContextHashBasedString :
+                context.isContextHashBasedString = True
             
         # Load child phrases
         for s,p,o in graph.triples((None, NIF.referenceContext, uri)):
@@ -128,7 +133,12 @@ class NIFContext(object):
             graph.add(triple)
         
         graph.namespace_manager = NIFPrefixes().manager
-        return graph.serialize(format='turtle')
+        out = graph.serialize(format='turtle')
+        
+        # workaround for https://github.com/RDFLib/rdflib/issues/884
+        if isinstance(out, binary_type):
+            out = out.decode('utf-8')
+        return out
     
     def __str__(self):
         return self.__repr__()

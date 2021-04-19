@@ -3,6 +3,8 @@ from rdflib import URIRef, Literal, Graph
 from .prefixes import NIF, XSD, ITSRDF, RDF
 from .prefixes import NIFPrefixes
 
+from six import binary_type
+
 class NIFPhrase(object):
     """
     Represents an annotation in a document.
@@ -116,6 +118,8 @@ class NIFPhrase(object):
                 phrase.taClassRef.append(o.toPython())
             elif p == ITSRDF.taSource:
                 phrase.source = o.toPython()
+            if o == NIF.ContextHashBasedString :
+                phrase.isContextHashBasedString = True
         return phrase
 
     @property
@@ -125,7 +129,12 @@ class NIFPhrase(object):
             graph.add(triple)
         
         graph.namespace_manager = NIFPrefixes().manager
-        return graph.serialize(format='turtle')
+        out = graph.serialize(format='turtle')
+        
+        # workaround for https://github.com/RDFLib/rdflib/issues/884
+        if isinstance(out, binary_type):
+            out = out.decode('utf-8')
+        return out
 
     def __str__(self):
         return self.__repr__()
