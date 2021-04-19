@@ -38,10 +38,11 @@ class NIFContextTest(unittest.TestCase):
         # it is not in the main repo. Once the PR is completed the  line 
         # cls.example_ContextHashBasedString = """....""" can be replaced by the following code:
         #
-        #testdir = os.path.dirname(os.path.abspath(__file__))
-        #with open(os.path.join(testdir, 'data/example-ContextHashBasedString.ttl'), 'r') as f:
-        #   cls.example_ContextHashBasedString = f.read()
-        cls.example_ContextHashBasedString = """@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+        testdir = os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(testdir, 'data/example-ContextHashBasedString.ttl'), 'r') as f:
+           cls.example_ContextHashBasedString = f.read()
+        """
+        cls.example_ContextHashBasedString = "@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
 @prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
@@ -65,6 +66,7 @@ class NIFContextTest(unittest.TestCase):
     nif:endIndex "33"^^xsd:nonNegativeInteger ;
     nif:isString "Diego Maradona is from Argentina." .
 
+"
 """
 
     def test_to_string_undefined(self):
