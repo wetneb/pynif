@@ -152,8 +152,7 @@ class NIFContextTest(unittest.TestCase):
         g = Graph().parse(format='turtle',data=self.example_ContextHashBasedString)
         uri = URIRef('http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr')
         parsed_context = NIFContext.load_from_graph(g, uri)
-        self.assertEqual(context.turtle, parsed_context.turtle)
-        self.assertEqual(context.turtle, self.example_ContextHashBasedString)
+        self.assertTrue(turtle_equal(context.turtle, parsed_context.turtle,))
     
     def test_load_ContextHashBasedString(self):
         g = Graph().parse(format='turtle',data=self.example_ContextHashBasedString)
@@ -162,7 +161,7 @@ class NIFContextTest(unittest.TestCase):
         self.assertTrue(parsed_context.isContextHashBasedString)
         for phrase in parsed_context.phrases:
             self.assertTrue(phrase.isContextHashBasedString)
-        self.assertEqual(parsed_context.turtle, self.example_ContextHashBasedString)
+        self.assertTrue(turtle_equal(parsed_context.turtle, self.example_ContextHashBasedString,))
 
 
 
