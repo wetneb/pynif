@@ -10,7 +10,6 @@ class NIFContextTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        testdir = os.path.dirname(os.path.abspath(__file__))
         cls.example_text = "    Primary Navigation Secondary Navigation Search: Nearly 60 militants killed in southern Afghanistan Tue Oct 7, 9:14 AM ET KABUL (Reuters) - U.S.-led coalition and Afghan security forces killed nearly 60 militants during separate clashes in southern Afghanistan, the U.S. military and a police official said Tuesday. Violence has surged in the war-torn country with some 3,800 people, a third of them civilians, killed as a result of the conflict by the end of July this year, according to the United Nations. U.S.-led coalition and Afghan security forces killed 43 militants during heavy fighting in Qalat district of southern Zabul province Sunday, the U.S. military said in a statement Tuesday. \"ANSF (Afghan National Security Forces ) and coalition forces on a patrol received heavy weapons, machine gun and sniper fire from militants in multiple locations,\" the U.S. military said in a statement. The combined forces responded with small arms fire , rocket propelled grenades and close air support , killing the militants, it said. No Afghan or U.S.-led troops were killed or wounded during incident, it said. In a separate incident, Afghan and international troops killed 16 Taliban insurgents and wounded six more during a gun battle in Nad Ali district of southern Helmand province on Monday, provincial police chief Asadullah Sherzad told Reuters. (Writing by Jonathon Burch; Editing by Bill Tarrant)"
         cls.example_turtle = """
             @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
@@ -34,8 +33,6 @@ class NIFContextTest(unittest.TestCase):
                 nif:endIndex    "{}"^^xsd:nonNegativeInteger ;
                 nif:isString    "{}" .
         """.format(len(cls.example_text), cls.example_text.replace('"', '\\"'))
-        with open(os.path.join(testdir, 'data/example-ContextHashBasedString.ttl'), 'r') as f:
-            cls.example_ContextHashBasedString = f.read()
 
     def test_to_string_undefined(self):
         c = NIFContext()
@@ -102,9 +99,16 @@ class NIFContextTest(unittest.TestCase):
                 annotator='http://freme-project.eu/tools/freme-ner',
                 taIdentRef='http://dbpedia.org/resource/Diego_Maradona',
                 taMsClassRef='http://dbpedia.org/ontology/SoccerManager')
-        self.assertTrue(turtle_equal(context.turtle, self.example_ContextHashBasedString,))
+        
+        testdir = os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(testdir, 'data/example-ContextHashBasedString.ttl'), 'r') as f:
+            example_ContextHashBasedString = f.read()
+        self.assertTrue(turtle_equal(context.turtle, example_ContextHashBasedString,))
 
     def test_load_from_graph_ContextHashBasedString(self):
+        testdir = os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(testdir, 'data/example-ContextHashBasedString.ttl'), 'r') as f:
+            example_ContextHashBasedString = f.read()
         context = NIFContext(
                 uri='http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr',
                 mention="Diego Maradona is from Argentina.",
@@ -119,20 +123,23 @@ class NIFContextTest(unittest.TestCase):
                 annotator='http://freme-project.eu/tools/freme-ner',
                 taIdentRef='http://dbpedia.org/resource/Diego_Maradona',
                 taMsClassRef='http://dbpedia.org/ontology/SoccerManager')
-        g = Graph().parse(format='turtle',data=self.example_ContextHashBasedString)
+        g = Graph().parse(format='turtle',data=example_ContextHashBasedString)
         uri = URIRef('http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr')
         parsed_context = NIFContext.load_from_graph(g, uri)
         self.assertEqual(context.turtle, parsed_context.turtle)
-        self.assertEqual(context.turtle, self.example_ContextHashBasedString)
+        self.assertEqual(context.turtle, example_ContextHashBasedString)
     
     def test_load_ContextHashBasedString(self):
-        g = Graph().parse(format='turtle',data=self.example_ContextHashBasedString)
+        testdir = os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(testdir, 'data/example-ContextHashBasedString.ttl'), 'r') as f:
+            example_ContextHashBasedString = f.read()
+        g = Graph().parse(format='turtle',data=example_ContextHashBasedString)
         uri = URIRef('http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr')
         parsed_context = NIFContext.load_from_graph(g, uri)
         self.assertTrue(parsed_context.isContextHashBasedString)
         for phrase in parsed_context.phrases:
             self.assertTrue(phrase.isContextHashBasedString)
-        self.assertEqual(parsed_context.turtle, self.example_ContextHashBasedString)
+        self.assertEqual(parsed_context.turtle, example_ContextHashBasedString)
 
 
 
