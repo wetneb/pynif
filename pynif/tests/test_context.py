@@ -81,11 +81,15 @@ class NIFContextTest(unittest.TestCase):
         self.assertEqual(len(self.example_text), context.endIndex)
     
     def test_create_ContextHashBasedString_context(self):
-        c = NIFContext(
+        context = NIFContext(
             uri='http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati',
             mention=self.example_text,
             is_hash_based_uri=True)
-        self.assertTrue(turtle_equal(self.example_turtle_ContextHashBasedString, c.turtle))
+
+        self.assertEqual(self.example_text, context.mention)
+        self.assertEqual(0, context.beginIndex)
+        self.assertEqual(1411, context.endIndex)
+        self.assertTrue(turtle_equal(self.example_turtle_ContextHashBasedString, context.turtle))
 
     def test_create_populated_ContextHashBasedString(self):
         context = NIFContext(
@@ -102,7 +106,12 @@ class NIFContextTest(unittest.TestCase):
                 annotator='http://freme-project.eu/tools/freme-ner',
                 taIdentRef='http://dbpedia.org/resource/Diego_Maradona',
                 taMsClassRef='http://dbpedia.org/ontology/SoccerManager')
-        self.assertTrue(turtle_equal(context.turtle, self.example_ContextHashBasedString,))
+
+        self.assertEqual(0, context.phrases[0].beginIndex)
+        self.assertEqual(14, context.phrases[0].endIndex)
+        self.assertEqual("Diego Maradona", context.phrases[0].mention)
+        self.assertEqual(0.9869992701528016, context.phrases[0].score)
+        self.assertTrue(turtle_equal(context.turtle, self.example_ContextHashBasedString))
 
     def test_load_from_graph_ContextHashBasedString(self):
         context = NIFContext(
@@ -122,16 +131,18 @@ class NIFContextTest(unittest.TestCase):
         g = Graph().parse(format='turtle',data=self.example_ContextHashBasedString)
         uri = URIRef('http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr')
         parsed_context = NIFContext.load_from_graph(g, uri)
-        self.assertTrue(turtle_equal(context.turtle, parsed_context.turtle,))
+
+        self.assertTrue(turtle_equal(context.turtle, parsed_context.turtle))
     
     def test_load_ContextHashBasedString(self):
         g = Graph().parse(format='turtle',data=self.example_ContextHashBasedString)
         uri = URIRef('http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr')
         parsed_context = NIFContext.load_from_graph(g, uri)
+
         self.assertTrue(parsed_context.isContextHashBasedString)
         for phrase in parsed_context.phrases:
             self.assertTrue(phrase.isContextHashBasedString)
-        self.assertTrue(turtle_equal(parsed_context.turtle, self.example_ContextHashBasedString,))
+        self.assertTrue(turtle_equal(parsed_context.turtle, self.example_ContextHashBasedString))
 
 
 
