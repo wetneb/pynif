@@ -3,6 +3,8 @@ from rdflib import URIRef, Literal, Graph
 from .prefixes import NIF, XSD, ITSRDF, RDF
 from .prefixes import NIFPrefixes
 
+from six import binary_type
+
 class NIFPhrase(object):
     """
     Represents an annotation in a document.
@@ -19,7 +21,21 @@ class NIFPhrase(object):
             taClassRef = None,
             taMsClassRef = None,
             uri = None,
+            is_hash_based_uri = False,
             source = None):
+        """
+        A phrase can be represented by an OffsetBasedString URI or a
+        ContextHashBasedString URI.
+
+        :pram: is_hash_based_uri set to True indicates that the :param: uri 
+        is a ContextHashBasedString, otherwsie is considered as OffsetBasedString.
+
+        ContextHashBasedString is discussed in 
+        the paper Linked-Data Aware URI Schemes for Referencing Text Fragments 
+        (https://doi.org/10.1007/978-3-642-33876-2_17) page 4. 
+        The ContextHashBasedString URI must be provided by the users, it is not
+        created automatically.
+        """
         self.context = context
         self.annotator = annotator
         self.mention = mention
@@ -29,6 +45,7 @@ class NIFPhrase(object):
         self.taIdentRef = taIdentRef
         self.taClassRef = taClassRef
         self.taMsClassRef = taMsClassRef
+        self.isContextHashBasedString = is_hash_based_uri
         self.original_uri = uri
         self.source = source
         
@@ -44,7 +61,10 @@ class NIFPhrase(object):
         """
         Returns the representation of the phrase as RDF triples
         """
-        yield (self.uri, RDF.type, NIF.OffsetBasedString)
+        if self.isContextHashBasedString:
+            yield (self.uri, RDF.type, NIF.ContextHashBasedString)
+        else:
+            yield (self.uri, RDF.type, NIF.OffsetBasedString)
         yield (self.uri, RDF.type, NIF.Phrase)
         yield (self.uri, NIF.anchorOf, Literal(self.mention))
         yield (self.uri, NIF.beginIndex, Literal(self.beginIndex, datatype=XSD.nonNegativeInteger))
@@ -98,6 +118,8 @@ class NIFPhrase(object):
                 phrase.taClassRef.append(o.toPython())
             elif p == ITSRDF.taSource:
                 phrase.source = o.toPython()
+            if o == NIF.ContextHashBasedString :
+                phrase.isContextHashBasedString = True
         return phrase
 
     @property
@@ -107,7 +129,12 @@ class NIFPhrase(object):
             graph.add(triple)
         
         graph.namespace_manager = NIFPrefixes().manager
-        return graph.serialize(format='turtle')
+        out = graph.serialize(format='turtle')
+        
+        # workaround for https://github.com/RDFLib/rdflib/issues/884
+        if isinstance(out, binary_type):
+            out = out.decode('utf-8')
+        return out
 
     def __str__(self):
         return self.__repr__()

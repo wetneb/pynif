@@ -105,3 +105,6 @@ ENV/
 # PyDev
 .project
 .pydevproject
+
+#VS Code
+.vscode

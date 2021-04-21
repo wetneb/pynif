@@ -3,6 +3,9 @@ from .phrase import NIFPhrase
 from .prefixes import NIF, XSD, ITSRDF, RDF, DCTERMS, nif_ontology_uri
 from .prefixes import NIFPrefixes
 
+from six import binary_type
+
+
 class NIFContext(object):
     """
     A context is a string which can be annotated by phrases.
@@ -13,7 +16,22 @@ class NIFContext(object):
                  endIndex=None,
                  mention=None,
                  sourceUrl=None,
-                 uri=None):
+                 uri=None,
+                 is_hash_based_uri = False):
+        """
+        A context can be represented by an OffsetBasedString URI or a
+        ContextHashBasedString URI.
+
+        :pram: is_hash_based_uri set to True indicates that the :param: uri 
+        is a ContextHashBasedString, otherwsie is considered as OffsetBasedString.
+
+        ContextHashBasedString is discussed in 
+        the paper Linked-Data Aware URI Schemes for Referencing Text Fragments 
+        (https://doi.org/10.1007/978-3-642-33876-2_17) page 4. 
+        The ContextHashBasedString URI must be provided by the users, it is not
+        created automatically.
+        """
+        self.isContextHashBasedString = is_hash_based_uri
         self.original_uri = uri
         self.beginIndex = beginIndex
         self.endIndex = endIndex
@@ -34,7 +52,8 @@ class NIFContext(object):
             taClassRef = None,
             taMsClassRef = None,
             uri = None,
-            source = None):
+            source = None,
+            is_hash_based_uri = False):
         """
         Creates a new annotation in this document.
         
@@ -49,7 +68,8 @@ class NIFContext(object):
                 taClassRef = taClassRef,
                 taMsClassRef = taMsClassRef,
                 uri = uri,
-                source = source)
+                source = source,
+                is_hash_based_uri= is_hash_based_uri)
         if beginIndex is not None and endIndex is not None:
             phrase.mention = self.mention[beginIndex:endIndex]
         self.phrases.append(phrase)
@@ -63,7 +83,10 @@ class NIFContext(object):
         """
         Returns the representation of the context as RDF triples
         """
-        yield (self.uri, RDF.type, NIF.OffsetBasedString)
+        if self.isContextHashBasedString:
+            yield (self.uri, RDF.type, NIF.ContextHashBasedString)
+        else:
+            yield (self.uri, RDF.type, NIF.OffsetBasedString)
         yield (self.uri, RDF.type, NIF.Context)
         yield (self.uri, NIF.beginIndex, Literal(self.beginIndex, datatype=XSD.nonNegativeInteger))
         yield (self.uri, NIF.endIndex, Literal(self.endIndex, datatype=XSD.nonNegativeInteger))
@@ -93,6 +116,8 @@ class NIFContext(object):
                 context.endIndex = o.toPython()
             elif p == NIF.sourceUrl:
                 context.sourceUrl = o.toPython()
+            if o == NIF.ContextHashBasedString :
+                context.isContextHashBasedString = True
             
         # Load child phrases
         for s,p,o in graph.triples((None, NIF.referenceContext, uri)):
@@ -108,7 +133,12 @@ class NIFContext(object):
             graph.add(triple)
         
         graph.namespace_manager = NIFPrefixes().manager
-        return graph.serialize(format='turtle')
+        out = graph.serialize(format='turtle')
+        
+        # workaround for https://github.com/RDFLib/rdflib/issues/884
+        if isinstance(out, binary_type):
+            out = out.decode('utf-8')
+        return out
     
     def __str__(self):
         return self.__repr__()
