@@ -197,7 +197,8 @@ If you have any problems with or questions about this library, please contact us
 Make sure the version in `setup.py` is up to date, create and upload a git tag, and then:
 
 ```
-python setup.py sdist bdist_wheel
+python -m build --sdist
+python -m build --wheel
 python -m twine upload dist/*
 ```
 
