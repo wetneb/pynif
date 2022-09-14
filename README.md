@@ -201,4 +201,4 @@ python setup.py sdist bdist_wheel
 python -m twine upload dist/*
 ```
 
-Increment hte version in `setup.py`.
+Increment the version in `setup.py`.
