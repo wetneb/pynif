@@ -1,6 +1,6 @@
 
 from rdflib import URIRef, Literal, Graph
-from .prefixes import NIF, XSD, ITSRDF, RDF
+from .prefixes import NIF, XSD, ITSRDF, RDF, RDFS
 from .prefixes import NIFPrefixes
 
 from six import binary_type
@@ -9,7 +9,7 @@ class NIFPhrase(object):
     """
     Represents an annotation in a document.
     """
-    
+
     def __init__(self,
             context = None,
             annotator = None,
@@ -18,6 +18,7 @@ class NIFPhrase(object):
             endIndex = None,
             score = None,
             taIdentRef = None,
+            taIdentRefLabel = None,
             taClassRef = None,
             taMsClassRef = None,
             uri = None,
@@ -27,12 +28,14 @@ class NIFPhrase(object):
         A phrase can be represented by an OffsetBasedString URI or a
         ContextHashBasedString URI.
 
-        :pram: is_hash_based_uri set to True indicates that the :param: uri 
+        :param: is_hash_based_uri set to True indicates that the :param: uri
         is a ContextHashBasedString, otherwsie is considered as OffsetBasedString.
+        :param: taIdentRef is the URI of the concept associated with this phrase
+        :param: taIdentRefLabel is its label (rdfs:label)
 
-        ContextHashBasedString is discussed in 
-        the paper Linked-Data Aware URI Schemes for Referencing Text Fragments 
-        (https://doi.org/10.1007/978-3-642-33876-2_17) page 4. 
+        ContextHashBasedString is discussed in
+        the paper Linked-Data Aware URI Schemes for Referencing Text Fragments
+        (https://doi.org/10.1007/978-3-642-33876-2_17) page 4.
         The ContextHashBasedString URI must be provided by the users, it is not
         created automatically.
         """
@@ -43,16 +46,17 @@ class NIFPhrase(object):
         self.endIndex = endIndex
         self.score = score
         self.taIdentRef = taIdentRef
+        self.taIdentRefLabel = taIdentRefLabel
         self.taClassRef = taClassRef
         self.taMsClassRef = taMsClassRef
         self.isContextHashBasedString = is_hash_based_uri
         self.original_uri = uri
         self.source = source
-        
+
     @property
     def uri(self):
         return URIRef(self.original_uri or self.generated_uri)
-        
+
     @property
     def generated_uri(self):
         return self.context.split('#')[0] + '#offset_' + str(self.beginIndex) + '_' + str(self.endIndex)
@@ -76,6 +80,8 @@ class NIFPhrase(object):
             yield (self.uri, ITSRDF.taConfidence, Literal(str(float(self.score)), datatype=XSD.double, normalize=False))
         if self.taIdentRef is not None:
             yield (self.uri, ITSRDF.taIdentRef, URIRef(self.taIdentRef))
+            if self.taIdentRefLabel is not None:
+                yield (URIRef(self.taIdentRef), RDFS.label, Literal(self.taIdentRefLabel))
         if self.taMsClassRef is not None:
             yield (self.uri, NIF.taMsClassRef, URIRef(self.taMsClassRef))
         for currentClassRef in self.taClassRef or []:
@@ -86,7 +92,7 @@ class NIFPhrase(object):
             yield (self.uri, NIF.taMsClassRef, URIRef(self.taMsClassRef))
         if self.source is not None:
             yield (self.uri, ITSRDF.taSource, Literal(self.source, datatype=XSD.string))
-            
+
     @classmethod
     def load_from_graph(cls, graph, uri):
         """
@@ -120,6 +126,13 @@ class NIFPhrase(object):
                 phrase.source = o.toPython()
             if o == NIF.ContextHashBasedString :
                 phrase.isContextHashBasedString = True
+
+        if phrase.taIdentRef:
+            # if there is a concept associated with this phrase, try loading its label
+            for o in graph.objects(URIRef(phrase.taIdentRef), RDFS.label):
+                phrase.taIdentRefLabel = o.toPython()
+                break
+
         return phrase
 
     @property
@@ -127,10 +140,10 @@ class NIFPhrase(object):
         graph = Graph()
         for triple in self.triples():
             graph.add(triple)
-        
+
         graph.namespace_manager = NIFPrefixes().manager
         out = graph.serialize(format='turtle')
-        
+
         # workaround for https://github.com/RDFLib/rdflib/issues/884
         if isinstance(out, binary_type):
             out = out.decode('utf-8')
@@ -138,7 +151,7 @@ class NIFPhrase(object):
 
     def __str__(self):
         return self.__repr__()
-    
+
     def __repr__(self):
         if (self.mention is not None
             and self.beginIndex is not None
@@ -149,7 +162,7 @@ class NIFPhrase(object):
             return '<NIFPhrase {}-{}: {}>'.format(self.beginIndex, self.endIndex, repr(mention))
         else:
             return '<NIFPhrase (undefined)>'
-        
+
     def _tuple(self):
         return (self.context,
         self.annotator,
@@ -158,13 +171,14 @@ class NIFPhrase(object):
         self.endIndex,
         self.score,
         self.taIdentRef,
+        self.taIdentRefLabel,
         set(self.taClassRef) if self.taClassRef else set(),
         self.taMsClassRef,
         self.uri,
         self.source)
-        
+
     def __eq__(self, other):
         return self._tuple() == other._tuple()
-    
+
     def __hash__(self):
         return hash(self.uri)

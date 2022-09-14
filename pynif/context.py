@@ -22,12 +22,12 @@ class NIFContext(object):
         A context can be represented by an OffsetBasedString URI or a
         ContextHashBasedString URI.
 
-        :pram: is_hash_based_uri set to True indicates that the :param: uri 
+        :pram: is_hash_based_uri set to True indicates that the :param: uri
         is a ContextHashBasedString, otherwsie is considered as OffsetBasedString.
 
-        ContextHashBasedString is discussed in 
-        the paper Linked-Data Aware URI Schemes for Referencing Text Fragments 
-        (https://doi.org/10.1007/978-3-642-33876-2_17) page 4. 
+        ContextHashBasedString is discussed in
+        the paper Linked-Data Aware URI Schemes for Referencing Text Fragments
+        (https://doi.org/10.1007/978-3-642-33876-2_17) page 4.
         The ContextHashBasedString URI must be provided by the users, it is not
         created automatically.
         """
@@ -45,10 +45,11 @@ class NIFContext(object):
 
     def add_phrase(self,
             beginIndex=None,
-            endIndex=None,    
+            endIndex=None,
             annotator = None,
             score = None,
             taIdentRef = None,
+            taIdentRefLabel = None,
             taClassRef = None,
             taMsClassRef = None,
             uri = None,
@@ -56,7 +57,7 @@ class NIFContext(object):
             is_hash_based_uri = False):
         """
         Creates a new annotation in this document.
-        
+
         :returns: the new {@class NIFPhrase}
         """
         phrase = NIFPhrase(context = self.original_uri,
@@ -65,6 +66,7 @@ class NIFContext(object):
                 annotator = annotator,
                 score = score,
                 taIdentRef = taIdentRef,
+                taIdentRefLabel = taIdentRefLabel,
                 taClassRef = taClassRef,
                 taMsClassRef = taMsClassRef,
                 uri = uri,
@@ -74,11 +76,11 @@ class NIFContext(object):
             phrase.mention = self.mention[beginIndex:endIndex]
         self.phrases.append(phrase)
         return phrase
-    
+
     @property
     def uri(self):
         return URIRef(self.original_uri)
-    
+
     def triples(self):
         """
         Returns the representation of the context as RDF triples
@@ -93,11 +95,11 @@ class NIFContext(object):
         yield (self.uri, NIF.isString, Literal(self.mention))
         if self.sourceUrl is not None:
             yield (self.uri, NIF.sourceUrl, URIRef(self.sourceUrl))
-               
+
         for phrase in self.phrases:
             for triple in phrase.triples():
                 yield triple
-        
+
     @classmethod
     def load_from_graph(cls, graph, uri):
         """
@@ -118,12 +120,12 @@ class NIFContext(object):
                 context.sourceUrl = o.toPython()
             if o == NIF.ContextHashBasedString :
                 context.isContextHashBasedString = True
-            
+
         # Load child phrases
         for s,p,o in graph.triples((None, NIF.referenceContext, uri)):
              phrase = NIFPhrase.load_from_graph(graph, s)
              context.phrases.append(phrase)
-             
+
         return context
 
     @property
@@ -131,18 +133,18 @@ class NIFContext(object):
         graph = Graph()
         for triple in self.triples():
             graph.add(triple)
-        
+
         graph.namespace_manager = NIFPrefixes().manager
         out = graph.serialize(format='turtle')
-        
+
         # workaround for https://github.com/RDFLib/rdflib/issues/884
         if isinstance(out, binary_type):
             out = out.decode('utf-8')
         return out
-    
+
     def __str__(self):
         return self.__repr__()
-    
+
     def __repr__(self):
         if (self.mention is not None
             and self.beginIndex is not None
@@ -153,7 +155,7 @@ class NIFContext(object):
             return '<NIFContext {}-{}: {}>'.format(self.beginIndex, self.endIndex, repr(mention))
         else:
             return '<NIFContext (undefined)>'
-        
+
     def _tuple(self):
         return (self.uri,
             self.beginIndex,
@@ -161,10 +163,10 @@ class NIFContext(object):
             self.mention,
             self.sourceUrl,
             set(self.phrases))
-    
+
     def __eq__(self, other):
         return self._tuple() == other._tuple()
-    
+
     def __hash__(self):
         return hash(self.uri)
-    
+
