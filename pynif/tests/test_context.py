@@ -15,7 +15,7 @@ class NIFContextTest(unittest.TestCase):
             @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
             @prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
             @prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
-                    
+
             <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_0_1411>
                 a                       nif:OffsetBasedString , nif:Context ;
                 nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
@@ -26,7 +26,7 @@ class NIFContextTest(unittest.TestCase):
             @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
             @prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
             @prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
-                    
+
             <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati>
                 a                       nif:ContextHashBasedString , nif:Context ;
                 nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
@@ -40,7 +40,7 @@ class NIFContextTest(unittest.TestCase):
     def test_to_string_undefined(self):
         c = NIFContext()
         self.assertEqual("<NIFContext (undefined)>", str(c))
-        
+
     def test_to_string(self):
         c = NIFContext()
         c.baseURI = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/'
@@ -48,38 +48,47 @@ class NIFContextTest(unittest.TestCase):
         c.mention = "    Primary Navigation Secondary Navigation Search: Nearly 60 militants killed"
         c.endIndex = len(c.mention)
         self.assertEqual("<NIFContext 0-78: '    Primary Navigation Secondary Navigation Search...'>", str(c))
-        
+
     def test_original_uri(self):
         b = NIFContext()
         b.original_uri = 'http://example.com/my_annotation'
         self.assertEqual('http://example.com/my_annotation', str(b.uri))
-        
+
     def test_add_phrase(self):
         c = NIFContext(uri = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0',
                        mention = self.example_text)
-        
+
         b = c.add_phrase(91, 102)
         self.assertEqual(91, b.beginIndex)
         self.assertEqual(102, b.endIndex)
         self.assertEqual("Afghanistan", b.mention)
         self.assertEqual("http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0", b.context)
-        
+
+        b2 = c.add_phrase(91, 102)
+        # if we add another phrase at the same location,
+        # we want to make sure that it has a different URI (as it can have different attributes)
+        self.assertNotEqual(b2.uri, b.uri)
+
+        self.assertEqual(91, b2.beginIndex)
+        self.assertEqual(102, b2.endIndex)
+        self.assertEqual("Afghanistan", b2.mention)
+
     def test_turtle(self):
         c = NIFContext(
             uri='http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_0_1411',
             mention=self.example_text)
 
         self.assertTrue(turtle_equal(self.example_turtle, c.turtle))
-        
+
     def test_load_from_graph(self):
         g = Graph().parse(format='turtle',data=self.example_turtle)
         uri = URIRef('http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc/yn_08Oct08_file_0/#offset_0_1411')
         context = NIFContext.load_from_graph(g, uri)
-        
+
         self.assertEqual(self.example_text, context.mention)
         self.assertEqual(0, context.beginIndex)
         self.assertEqual(len(self.example_text), context.endIndex)
-    
+
     def test_create_ContextHashBasedString_context(self):
         context = NIFContext(
             uri='http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati',
@@ -133,7 +142,7 @@ class NIFContextTest(unittest.TestCase):
         parsed_context = NIFContext.load_from_graph(g, uri)
 
         self.assertTrue(turtle_equal(context.turtle, parsed_context.turtle))
-    
+
     def test_load_ContextHashBasedString(self):
         g = Graph().parse(format='turtle',data=self.example_ContextHashBasedString)
         uri = URIRef('http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr')

@@ -23,7 +23,8 @@ class NIFPhrase(object):
             taMsClassRef = None,
             uri = None,
             is_hash_based_uri = False,
-            source = None):
+            source = None,
+            ):
         """
         A phrase can be represented by an OffsetBasedString URI or a
         ContextHashBasedString URI.
@@ -59,6 +60,8 @@ class NIFPhrase(object):
 
     @property
     def generated_uri(self):
+        # this way of generating an URI is not guaranteed to work because two distinct mentions
+        # can have the same start and end.
         return self.context.split('#')[0] + '#offset_' + str(self.beginIndex) + '_' + str(self.endIndex)
 
     def triples(self):

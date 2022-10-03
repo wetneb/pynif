@@ -60,6 +60,12 @@ class NIFContext(object):
 
         :returns: the new {@class NIFPhrase}
         """
+        if uri is None:
+            # add the index of the phrase in the list of current phrases
+            # (otherwise generated URIs are not guaranteed to be distinct)
+            uri = (self.original_uri.split('#')[0] + '#offset_' + str(self.beginIndex) +
+                    '_' + str(self.endIndex) + '_' + str(len(self.phrases)))
+
         phrase = NIFPhrase(context = self.original_uri,
                 beginIndex = beginIndex,
                 endIndex = endIndex,
