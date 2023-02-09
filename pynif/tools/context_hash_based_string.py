@@ -17,7 +17,7 @@ def context_hash_based_string(text: str, original_uri: str, beginIndex: int = No
         elif endIndex is None:  # beginIndex and endIndex are provided
             raise TypeError("At least one argument 'length' or 'endIndex' must be provided")
         
-        scheme_identifier = 'hash'
+        scheme_identifier = '#hash'
         context_string = text[beginIndex:endIndex]
         overall_length = len(context_string)
 
@@ -58,7 +58,7 @@ def context_hash_based_string(text: str, original_uri: str, beginIndex: int = No
 
         string = urllib.parse.quote(context_string[0:20], safe='') #First 20 characters of the full context
 
-        contextHashBasedString = original_uri + scheme_identifier + '_' + str(context_length) + '_' + str(overall_length) + '_' + message_digest + '_' + string
+        contextHashBasedString = original_uri.split('#')[0] + scheme_identifier + '_' + str(context_length) + '_' + str(overall_length) + '_' + message_digest + '_' + string
         
         # Extended version of ContextHashBasedString:
         # add the beginIndex and endIndex of the phrase to the generated URI

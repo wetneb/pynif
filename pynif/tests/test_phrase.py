@@ -122,7 +122,7 @@ class NIFPhraseTest(unittest.TestCase):
         self.assertEqual('Afghanistan', phrase.taIdentRefLabel)
 
     def test_create_ContextHashBasedString_phrase(self):
-        original_uri = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#'
+        original_uri = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc'
         context_uri = context_hash_based_string(self.example_text, original_uri)
         phrase_uri = context_hash_based_string(self.example_text, original_uri, beginIndex = 91, endIndex = 102)
         phrase = NIFPhrase(

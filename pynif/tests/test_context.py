@@ -92,7 +92,7 @@ class NIFContextTest(unittest.TestCase):
         self.assertEqual(len(self.example_text), context.endIndex)
 
     def test_create_ContextHashBasedString_context(self):
-        original_uri = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#'
+        original_uri = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc'
         context_uri = context_hash_based_string(self.example_text, original_uri)
         context = NIFContext(
             uri=context_uri,
@@ -105,7 +105,7 @@ class NIFContextTest(unittest.TestCase):
         self.assertTrue(turtle_equal(self.example_turtle_ContextHashBasedString, context.turtle))
 
     def test_create_populated_ContextHashBasedString(self):
-        original_uri = 'http://freme-project.eu#'
+        original_uri = 'http://freme-project.eu'
         text = "Diego Maradona is from Argentina."
         context_uri = context_hash_based_string(text, original_uri)
         phrase_uri = context_hash_based_string(text, original_uri, beginIndex = 0, endIndex = 14)
@@ -131,7 +131,7 @@ class NIFContextTest(unittest.TestCase):
         self.assertTrue(turtle_equal(context.turtle, self.example_ContextHashBasedString))
 
     def test_load_from_graph_ContextHashBasedString(self):
-        original_uri = 'http://freme-project.eu#'
+        original_uri = 'http://freme-project.eu'
         text = "Diego Maradona is from Argentina."
         context_uri = context_hash_based_string(text, original_uri)
         phrase_uri = context_hash_based_string(text, original_uri, beginIndex = 0, endIndex = 14)
