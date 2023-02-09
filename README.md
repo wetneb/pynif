@@ -131,9 +131,7 @@ for context in parsed_collection.contexts:
 
 A context can be represented by an OffsetBasedString URI or a ContextHashBasedString URI. The ContextHashBasedString URI format is discussed in the paper Linked-Data Aware URI Schemes for Referencing Text Fragments (https://doi.org/10.1007/978-3-642-33876-2_17) page 4. 
 
-**URIs formatted as ContextHashBasedString must be manually provided. The current pynif does not create them for you**
-
-To use ContextHashBasedString URIs, you always need to provide them when creating Contexts and Phrases.
+To use ContextHashBasedString URIs, **you must provide them when creating Contexts and Phrases. The current pynif does not automaticaly create them for you** as it does with the OffsetBasedString.
 To provide a ContextHashBasedString URI instead of a OffsetBasedString URI, you must set the ``:param: is_hash_based_uri`` to ``True`` (by default ``is_hash_based_uri`` is ``False`` and the pynif works with ``nif:OffsetBasedString``). See the following examples:
 
 ```py
@@ -143,7 +141,7 @@ context = NIFContext(
     mention="Diego Maradona is from Argentina.")
 
 context.add_phrase(
-    uri='http://freme-project.eu#hash_19_33_158118325b076b079d3969108872d855_Diego%20Maradona%20is%20fr',
+    uri='http://freme-project.eu#hash_10_14_d18575292bcf716916eb99eb8927377f_Diego%20Maradona',
     is_hash_based_uri = True,
     beginIndex=0,
     endIndex=14,
@@ -173,7 +171,7 @@ print(generated_nif)
     nif:endIndex    "33"^^xsd:nonNegativeInteger ;
     nif:isString    "Diego Maradona is from Argentina." .
 
-<http://freme-project.eu#hash_19_33_158118325b076b079d3969108872d855_Diego%20Maradona%20is%20fr>
+<http://freme-project.eu#hash_10_14_d18575292bcf716916eb99eb8927377f_Diego%20Maradona>
     a nif:ContextHashBasedString, nif:Phrase ;
     nif:anchorOf "Diego Maradona" ;
     nif:beginIndex "0"^^xsd:nonNegativeInteger ;
@@ -187,6 +185,32 @@ print(generated_nif)
     itsrdf:taConfidence 9.869993e-01 ;
     itsrdf:taIdentRef <http://dbpedia.org/resource/Diego_Maradona> .
 ```
+
+**URIs formatted as ContextHashBasedString can be created using the companion algortihm from pynif.tools** 
+
+```python 
+from pynif.tools import context_hash_based_string
+
+text = "Diego Maradona is from Argentina."
+original_uri = "http://freme-project.eu#"
+
+contextHashBasedString = context_hash_based_string(text, original_uri)
+#Output = http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr
+
+#To annotated an occurence with beginIndex and endIndex
+contextHashBasedString = context_hash_based_string(text, original_uri,beginIndex=0, endIndex=14,context_length=10)
+#Output = http://freme-project.eu#hash_10_14_d18575292bcf716916eb99eb8927377f_Diego%20Maradona
+
+#To annotated an occurence with beginIndex and length
+contextHashBasedString = context_hash_based_string(text, original_uri,beginIndex=0, length=14)
+#Output = http://freme-project.eu#hash_10_14_d18575292bcf716916eb99eb8927377f_Diego%20Maradona
+
+#An extension of the contextHashBasedString algorithm to ensure uniqueness
+contextHashBasedString = context_hash_based_string(text, original_uri,beginIndex=0, endIndex=14,context_length=10, safe=True)
+#Output = http://freme-project.eu#hash_10_14_d18575292bcf716916eb99eb8927377f_Diego%20Maradona_0_14'
+```
+
+The `text` and `orginal_uri` are required parameters, the rest are optional.
 
 ## Issues
 
