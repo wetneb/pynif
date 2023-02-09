@@ -2,7 +2,7 @@
 @prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://freme-project.eu#hash_19_33_158118325b076b079d3969108872d855_Diego%20Maradona%20is%20fr> a nif:ContextHashBasedString,
+<http://freme-project.eu#hash_10_14_d18575292bcf716916eb99eb8927377f_Diego%20Maradona> a nif:ContextHashBasedString,
         nif:Phrase ;
     nif:anchorOf "Diego Maradona" ;
     nif:beginIndex "0"^^xsd:nonNegativeInteger ;
