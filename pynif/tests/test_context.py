@@ -2,9 +2,11 @@
 import os
 
 import unittest
-from pynif.context import NIFContext
-from .util import turtle_equal
 from rdflib import Graph, URIRef
+
+from pynif.context import NIFContext
+from pynif.tools.context_hash_based_string import context_hash_based_string
+from .util import turtle_equal
 
 class NIFContextTest(unittest.TestCase):
 
@@ -27,7 +29,7 @@ class NIFContextTest(unittest.TestCase):
             @prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
             @prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
 
-            <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati>
+            <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_4_1411_0d65523ef72343af915f29206bfde1b8_%20%20%20%20Primary%20Navigati>
                 a                       nif:ContextHashBasedString , nif:Context ;
                 nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
                 nif:endIndex    "{}"^^xsd:nonNegativeInteger ;
@@ -90,8 +92,10 @@ class NIFContextTest(unittest.TestCase):
         self.assertEqual(len(self.example_text), context.endIndex)
 
     def test_create_ContextHashBasedString_context(self):
+        original_uri = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc'
+        context_uri = context_hash_based_string(self.example_text, original_uri)
         context = NIFContext(
-            uri='http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati',
+            uri=context_uri,
             mention=self.example_text,
             is_hash_based_uri=True)
 
@@ -101,12 +105,16 @@ class NIFContextTest(unittest.TestCase):
         self.assertTrue(turtle_equal(self.example_turtle_ContextHashBasedString, context.turtle))
 
     def test_create_populated_ContextHashBasedString(self):
+        original_uri = 'http://freme-project.eu'
+        text = "Diego Maradona is from Argentina."
+        context_uri = context_hash_based_string(text, original_uri)
+        phrase_uri = context_hash_based_string(text, original_uri, beginIndex = 0, endIndex = 14)
         context = NIFContext(
-                uri='http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr',
-                mention="Diego Maradona is from Argentina.",
+                uri=context_uri,
+                mention=text,
                 is_hash_based_uri = True)
         context.add_phrase(
-                uri='http://freme-project.eu#hash_19_33_158118325b076b079d3969108872d855_Diego%20Maradona%20is%20fr',
+                uri=phrase_uri,
                 is_hash_based_uri = True,
                 beginIndex=0,
                 endIndex=14,
@@ -123,12 +131,16 @@ class NIFContextTest(unittest.TestCase):
         self.assertTrue(turtle_equal(context.turtle, self.example_ContextHashBasedString))
 
     def test_load_from_graph_ContextHashBasedString(self):
+        original_uri = 'http://freme-project.eu'
+        text = "Diego Maradona is from Argentina."
+        context_uri = context_hash_based_string(text, original_uri)
+        phrase_uri = context_hash_based_string(text, original_uri, beginIndex = 0, endIndex = 14)
         context = NIFContext(
-                uri='http://freme-project.eu#hash_0_33_cf35b7e267d05b7ca8aba0651641050b_Diego%20Maradona%20is%20fr',
-                mention="Diego Maradona is from Argentina.",
+                uri=context_uri,
+                mention=text,
                 is_hash_based_uri = True)
         context.add_phrase(
-                uri='http://freme-project.eu#hash_19_33_158118325b076b079d3969108872d855_Diego%20Maradona%20is%20fr',
+                uri=phrase_uri,
                 is_hash_based_uri = True,
                 beginIndex=0,
                 endIndex=14,

@@ -1,5 +1,6 @@
 import unittest
 import os
+
 from pynif.collection import NIFCollection
 from .util import turtle_equal
 

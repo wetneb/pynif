@@ -1,8 +1,10 @@
 
 import unittest
-from pynif.phrase import NIFPhrase
-from .util import turtle_equal
 from rdflib import Graph, URIRef
+
+from pynif.phrase import NIFPhrase
+from pynif.tools.context_hash_based_string import context_hash_based_string
+from .util import turtle_equal
 
 class NIFPhraseTest(unittest.TestCase):
 
@@ -45,15 +47,15 @@ class NIFPhraseTest(unittest.TestCase):
         @prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
         @prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
 
-        <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_1400_1411_9f215ab78483a223463f9726ee0e92c0_%20%20%20%20Primary%20Navigati>
+        <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_10_11_0fe40301646263d200012262413c878a_Afghanistan>
             a                       nif:ContextHashBasedString , nif:Phrase ;
             nif:anchorOf            "Afghanistan" ;
             nif:beginIndex          "91"^^xsd:nonNegativeInteger ;
             nif:endIndex            "102"^^xsd:nonNegativeInteger ;
-            nif:referenceContext    <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati> ;
+            nif:referenceContext    <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_4_1411_0d65523ef72343af915f29206bfde1b8_%20%20%20%20Primary%20Navigati> ;
             itsrdf:taConfidence     "1"^^xsd:double ;
             itsrdf:taIdentRef       <http://dbpedia.org/resource/Afghanistan> .
-        """
+    """
 
     def test_to_string_blank(self):
         b = NIFPhrase()
@@ -120,10 +122,13 @@ class NIFPhraseTest(unittest.TestCase):
         self.assertEqual('Afghanistan', phrase.taIdentRefLabel)
 
     def test_create_ContextHashBasedString_phrase(self):
+        original_uri = 'http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc'
+        context_uri = context_hash_based_string(self.example_text, original_uri)
+        phrase_uri = context_hash_based_string(self.example_text, original_uri, beginIndex = 91, endIndex = 102)
         phrase = NIFPhrase(
-            uri='http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_1400_1411_9f215ab78483a223463f9726ee0e92c0_%20%20%20%20Primary%20Navigati',
+            uri=phrase_uri,
             is_hash_based_uri = True,
-            context = "http://www.cse.iitb.ac.in/~soumen/doc/CSAW/doc#hash_0_1411_6218664a3a8c7bed58460e329ddc6904_%20%20%20%20Primary%20Navigati",
+            context = context_uri,
             beginIndex=91,
             endIndex=102,
             mention= self.example_text[91:102],
